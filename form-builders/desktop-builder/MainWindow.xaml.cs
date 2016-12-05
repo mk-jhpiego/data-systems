@@ -24,5 +24,20 @@ namespace desktop_builder
         {
             InitializeComponent();
         }
+
+        private void closeButton_click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void saveButton_click(object sender, RoutedEventArgs e)
+        {
+            //this.Close();
+        }
+        private void cancelButton_click(object sender, RoutedEventArgs e)
+        {
+            //warn that they wil lose data before attempting to close
+            //this.Close();
+        }
     }
 }

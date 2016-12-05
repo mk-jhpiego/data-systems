@@ -5,8 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:desktop_builder"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="800" Width="1000" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <!--<RowDefinition Height="Auto"/>-->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition MinWidth="400" Width="Auto"/>
+            <ColumnDefinition MinWidth="300" Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Module Builder / Designer" Grid.ColumnSpan="2" Grid.Row="0" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="25" FontFamily="Gill Sans MT"/>
+        <Grid Grid.Column="2" Grid.Row="0" Height="Auto" Width="Auto" Background="#FF305B75">
+            <Button Click="closeButton_click" Content="X" HorizontalAlignment="Right" Height="Auto" Width="Auto" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="25" FontFamily="Gill Sans MT"/>
+        </Grid>
+        <Label Content="Module Setup" Grid.Column="0" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <Label Content="Add or Edit Field" Grid.Column="1" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <Label Content="Module Fields" Grid.Column="2" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2" Margin="5" >
+            <Label Content="Module Name" Foreground="#FF305B75"/>
+            <TextBox Name="textModuleName" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Label Content="Type of Module" Foreground="#FF305B75"/>
+            <RadioButton GroupName="groupModuleType" Name="Person" Content="Person"/>
+            <RadioButton GroupName="groupModuleType" Name="NonPerson" Content="Non Person"/>
+            <RadioButton GroupName="groupModuleType" Name="Group" Content="A Group, e.g. Household"/>
+            <Label Content="Module Version" Foreground="#FF305B75"/>
+            <TextBox Name="textModuleVersion" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Label Content="Description" Foreground="#FF305B75"/>
+            <TextBox MinLines="8" MaxLines="8" Name="textModuleDescription" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
+            <Label Content="" Height="5"/>
+            <Label Content="Save your changes and start adding fields" Foreground="#FF305B75"/>
+            <Button Click="saveButton_click" Margin="5" Content="Save" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Button Click="cancelButton_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+        </StackPanel>
     </Grid>
 </Window>
