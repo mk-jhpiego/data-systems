@@ -26,6 +26,13 @@ namespace desktop_builder
         public MainWindow()
         {
             InitializeComponent();
+            MouseDown += Window_MouseDown;
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
 
         private void closeButton_click(object sender, RoutedEventArgs e)
@@ -72,9 +79,9 @@ namespace desktop_builder
 
         void updateModuleDefinition(moduleDefinition module)
         {
-            module.moduleName = getValue(textModuleName);
-            module.moduleDescription = getValue(textModuleDescription);
-            module.moduleVersion = getValue(textModuleVersion);
+            module.name = getValue(textModuleName);
+            module.description = getValue(textModuleDescription);
+            module.version = getValue(textModuleVersion);
             var moduleTypeOption = getCheckedItem(
                 rdbModTypePerson, rdbModTypeNonPerson, rdbModTypeGroup);
             module.moduleType = moduleTypeOption;
@@ -84,22 +91,22 @@ namespace desktop_builder
         void updateView(moduleDefinition module)
         {
             _currentModule = module;
-            setValue(textModuleName, module.moduleName);
-            setValue(textModuleDescription, module.moduleDescription);
-            setValue(textModuleVersion, module.moduleVersion);
+            setValue(textModuleName, module.name);
+            setValue(textModuleDescription, module.description);
+            setValue(textModuleVersion, module.version);
             setValue(module.moduleType, rdbModTypePerson, rdbModTypeNonPerson, rdbModTypeGroup);
             setValue(textEmailAddress, module.userId);
-            setValue(textModuleName, module.moduleName);
+            setValue(textModuleName, module.name);
         }
 
         private void saveButton_click(object sender, RoutedEventArgs e)
         {
             //we update the module definition
-            _currentModule = _currentModule ?? new moduleDefinition() { moduleId = Guid.NewGuid().ToString("N") };
+            _currentModule = _currentModule ?? new moduleDefinition() { id = Guid.NewGuid().ToString("N") };
             updateModuleDefinition(_currentModule);
 
             //and save
-            var name = _currentModule.moduleName.Replace(' ', '-').ToLowerInvariant() + ".json";
+            var name = _currentModule.name.Replace(' ', '-').ToLowerInvariant() + ".json";
             var dialog = new SaveFileDialog() { FileName = name, OverwritePrompt = true, Filter = "*.json|json", InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) };
             var dialogResult = dialog.ShowDialog();
             if (dialogResult != null && dialogResult == true)
@@ -107,6 +114,28 @@ namespace desktop_builder
                 File.WriteAllText(dialog.FileName,
                     Newtonsoft.Json.JsonConvert.SerializeObject(_currentModule));
             }
+        }
+
+        //addField_click
+        private void addField_click(object sender, RoutedEventArgs e) {
+            //weread the field values and clear the form
+
+        }
+        //cancelAddField_click
+        private void cancelAddField_click(object sender, RoutedEventArgs e) {
+            //discard changes and clear the fields
+
+        }
+
+        private void saveSubModuleChangesButton_click(object sender, RoutedEventArgs e)
+        {
+            //weread the field values and clear the form
+
+        }
+        private void cancelSubModuleChanges_click(object sender, RoutedEventArgs e)
+        {
+            //discard changes and clear the fields
+
         }
 
         private void openExisting_click(object sender, RoutedEventArgs e)
@@ -132,7 +161,7 @@ namespace desktop_builder
             var msg = MessageBox.Show("Do you want to close? Unsaved changes will be lost","Confirm action", MessageBoxButton.OKCancel);
             if (msg == MessageBoxResult.OK)
             {
-                var module = new moduleDefinition() { moduleId = Guid.NewGuid().ToString("N") };
+                var module = new moduleDefinition() { id = Guid.NewGuid().ToString("N") };
                 updateView(module);
             }            
         }

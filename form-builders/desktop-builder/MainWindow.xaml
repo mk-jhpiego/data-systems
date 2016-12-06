@@ -5,38 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:desktop_builder"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1000" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="900" Width="1440" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="55"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <!--<RowDefinition Height="Auto"/>-->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="540"/>
             <ColumnDefinition MinWidth="400" Width="Auto"/>
-            <ColumnDefinition MinWidth="300" Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Module Builder / Designer" Grid.ColumnSpan="2" Grid.Row="0" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="25" FontFamily="Gill Sans MT"/>
-        <Grid Grid.Column="2" Grid.Row="0" Height="Auto" Width="Auto" Background="#FF305B75">
+        <Label Content="Module Builder / Designer" Grid.ColumnSpan="3" Grid.Row="0" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="25" FontFamily="Gill Sans MT"/>
+        <Grid Grid.Column="3" Grid.Row="0" Height="Auto" Width="Auto" Background="#FF305B75">
             <Button Click="closeButton_click" Content="X" HorizontalAlignment="Right" Height="Auto" Width="Auto" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="25" FontFamily="Gill Sans MT"/>
         </Grid>
-        <Label Content="Module Setup" Grid.Column="0" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
-        <Label Content="Add or Edit Field" Grid.Column="1" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
-        <Label Content="Module Fields" Grid.Column="2" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
-        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2" Margin="5" >
+        <Label HorizontalContentAlignment="Center" Content="Module Setup" Grid.Column="0" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <Label HorizontalContentAlignment="Center" Content="Available Sub-modules" Grid.Column="1" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <Label HorizontalContentAlignment="Center" Content="Sub-module Fields" Grid.Column="2" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <Label HorizontalContentAlignment="Center" Content="Field Editor" Grid.Column="3" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
+        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2" Margin="15" >
             <Button Click="openExisting_click" Margin="0,0,0,25" Content="Open Existing" HorizontalAlignment="Left" Height="45" Width="Auto" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="Module Name" Foreground="#FF305B75"/>
             <TextBox Name="textModuleName" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="Type of Module" Foreground="#FF305B75"/>
-            <RadioButton GroupName="groupModuleType" Name="rdbModTypePerson" Content="Person"/>
-            <RadioButton GroupName="groupModuleType" Name="rdbModTypeNonPerson" Content="Non Person"/>
-            <RadioButton GroupName="groupModuleType" Name="rdbModTypeGroup" Content="A Group, e.g. Household"/>
+            <RadioButton GroupName="groupModuleType" Name="rdbModTypePerson" Content="Person" VerticalContentAlignment="Center" FontSize="20"/>
+            <RadioButton GroupName="groupModuleType" Name="rdbModTypeNonPerson" Content="Non Person" VerticalContentAlignment="Center" FontSize="20"/>
+            <RadioButton GroupName="groupModuleType" Name="rdbModTypeGroup" Content="Grouping" VerticalContentAlignment="Center" FontSize="20"/>
             <Label Content="Module Version" Foreground="#FF305B75"/>
             <TextBox Name="textModuleVersion" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="Description" Foreground="#FF305B75"/>
-            <TextBox MinLines="8" MaxLines="8" Name="textModuleDescription" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
+            <TextBox AcceptsReturn="True" MinLines="6" MaxLines="6" Name="textModuleDescription" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
             <Label Content="Your email" Foreground="#FF305B75"/>
             <TextBox Name="textEmailAddress" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="" Height="5"/>
@@ -44,5 +45,100 @@
             <Button Click="saveButton_click" Margin="5" Content="Save" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
             <Button Click="cancelButton_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
         </StackPanel>
+        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2" Margin="15" >
+            <Label Content="Activity Name" Foreground="#FF305B75"/>
+            <TextBox Name="textSubModuleName" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Label Content="Version" Foreground="#FF305B75"/>
+            <TextBox Name="textSubModuleVersion" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Label Content="Description" Foreground="#FF305B75"/>
+            <TextBox AcceptsReturn="True" MinLines="6" MaxLines="6" Name="textSubModuleDescription" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
+
+            <Button Click="saveSubModuleChangesButton_click"  Margin="5" Content="Save" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Button Click="cancelSubModuleChanges_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+
+            <Label Content="Current Activities " Foreground="#FF305B75" FontSize="20"/>
+            <ListView Name="lstModuleActivities" Width="Auto" Background="Maroon" Height="Auto">
+                <ListItem></ListItem>
+                <ListItem></ListItem>
+                <ListItem></ListItem>
+                <ListItem></ListItem>
+                <ListItem></ListItem>
+            </ListView>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" Grid.Column="3" Grid.Row="2" Margin="25" >
+            <Label Content="Question" Foreground="#FF305B75"/>
+            <TextBox Name="fieldTextQuestion" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Label Content="Type of Data" Foreground="#FF305B75"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,50,0">
+                    <RadioButton GroupName="dataType" Content="Label" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Text" IsChecked="True" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Number" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Integer" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Single Select" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Multiple Select" VerticalContentAlignment="Center" FontSize="20"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <RadioButton GroupName="dataType" Content="Date" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Time" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Dataset" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="GPS" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Image" VerticalContentAlignment="Center" FontSize="20"/>
+                    <RadioButton GroupName="dataType" Content="Barcode" VerticalContentAlignment="Center" FontSize="20"/>
+                </StackPanel>
+            </Grid>
+            <TextBlock Text="Field Choices. Add one per line" Foreground="#FF305B75"/>
+            <TextBox AcceptsReturn="True" MinLines="6" MaxLines="6" Name="textFieldChoices" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
+            <Label Content="Question Name (optional for labels)" Foreground="#FF305B75"/>
+            <TextBox Name="fieldTextQuestionName" FontSize="20" FontFamily="Gill Sans MT"/>
+            <Label Content="Validations" Foreground="#FF305B75" FontSize="20"/>
+            <Label Content="Allowed Ranges (Min / Max)" Foreground="#FF305B75"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Content="Minimum" Foreground="#FF305B75"/>
+                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="0" Name="fieldTextMinimum" FontSize="20" FontFamily="Gill Sans MT"/>
+                <Label Grid.Column="0" Grid.Row="1" Content="Maximum" Foreground="#FF305B75"/>
+                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="1" Name="fieldTextMaximum" FontSize="20" FontFamily="Gill Sans MT"/>
+                <Label Grid.Column="0" Grid.Row="2" Content="Maximum Length" Foreground="#FF305B75"/>
+                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="2" Name="fieldTextMaxLength" FontSize="20" FontFamily="Gill Sans MT"/>
+
+                <Label Grid.Column="0" Grid.Row="3" Content="Is Required" Foreground="#FF305B75"/>
+                <RadioButton Grid.Column="1" Grid.Row="3" GroupName="isRequired" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
+                <RadioButton Grid.Column="1" Grid.Row="3" Margin="100,0,0,0" GroupName="isRequired" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
+
+                <Label Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Content="Allowed Date Ranges, can use @today or YYYY-mm-dd" Foreground="#FF305B75"/>
+                <Label Grid.Column="0" Grid.Row="5" Content="Min. Date" Foreground="#FF305B75"/>
+                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="5" Name="fieldTextDateMin" FontSize="20" FontFamily="Gill Sans MT"/>
+                <Label Grid.Column="0" Grid.Row="6" Content="Max Date" Foreground="#FF305B75"/>
+                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="6" Name="fieldTextDateMax" FontSize="20" FontFamily="Gill Sans MT"/>
+            </Grid>
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Click="addField_click" Margin="5" Content="Add Field" HorizontalAlignment="Center" Height="45" Width="150" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
+                <Button Grid.Column="1" Click="cancelAddField_click" Margin="5" Content="Discard Changes" HorizontalAlignment="Center" Height="45" Width="150" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+            </Grid>
+
+        </StackPanel>
+
     </Grid>
 </Window>
