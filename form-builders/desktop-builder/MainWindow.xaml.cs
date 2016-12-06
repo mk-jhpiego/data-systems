@@ -35,6 +35,33 @@ namespace desktop_builder
                 DragMove();
         }
 
+        private void actvitiesRowSelected(object sender, MouseButtonEventArgs e)
+        {           
+            var selectedRow = gridModuleActivities.SelectedItem;
+            if (selectedRow == null) return;
+            var moduleActivity = selectedRow as subModuleDefinition;
+            if (moduleActivity == null) return;
+
+            var id = moduleActivity.id;
+            //we update the view with these details
+            updateSubModuleEditor(moduleActivity);
+        }
+
+        void updateSubModuleEditor(subModuleDefinition module)
+        {
+            setValue(textSubModuleId, module.id);
+            setValue(textSubModuleName, module.name);
+            setValue(textSubModuleVersion, module.version);
+            setValue(textSubModuleDescription, module.description);
+            //bind activities list
+            updateFieldPropertiesList(module);
+        }
+
+        private void updateFieldPropertiesList(subModuleDefinition module)
+        {
+            
+        }
+
         private void closeButton_click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -67,7 +94,7 @@ namespace desktop_builder
 
         string getValue(TextBox control)
         {
-            return control.Text ?? control.Text;
+            return string.IsNullOrWhiteSpace(control.Text) ? "" : control.Text;
         }
 
         string getCheckedItem(params RadioButton[] controls)
@@ -97,12 +124,24 @@ namespace desktop_builder
             setValue(module.moduleType, rdbModTypePerson, rdbModTypeNonPerson, rdbModTypeGroup);
             setValue(textEmailAddress, module.userId);
             setValue(textModuleName, module.name);
+
+            //bind activities list
+            updateActivitiesList(_currentModule.subModules);
+        }
+
+        void updateActivitiesList(List<subModuleDefinition> subModules)
+        {
+            _currentModule.subModules = _currentModule.subModules ?? 
+                new List<subModuleDefinition>();
+            gridModuleActivities.ItemsSource = "";
+            gridModuleActivities.ItemsSource = _currentModule.subModules;
+            //gridModuleActivities.re
         }
 
         private void saveButton_click(object sender, RoutedEventArgs e)
         {
             //we update the module definition
-            _currentModule = _currentModule ?? new moduleDefinition() { id = Guid.NewGuid().ToString("N") };
+            _currentModule = _currentModule ?? new moduleDefinition() { id = Guid.NewGuid().ToString("N"), subModules=new List<subModuleDefinition>() };
             updateModuleDefinition(_currentModule);
 
             //and save
@@ -129,13 +168,49 @@ namespace desktop_builder
 
         private void saveSubModuleChangesButton_click(object sender, RoutedEventArgs e)
         {
-            //weread the field values and clear the form
+            //we read the field values and clear the form
+            if (_currentModule == null)
+            {
+                showDialog("Please select a module first");
+                return;
+            }
 
+            if (_currentModule.subModules == null)
+                _currentModule.subModules = new List<subModuleDefinition>();
+
+            //we get all the values
+            var subModuleId = getValue(textSubModuleId);
+            var subModuleName = getValue(textSubModuleName);
+            var subModuleDescription = getValue(textSubModuleDescription);
+            var subModuleVersion = getValue(textSubModuleVersion);
+
+            //check if this activity exist by id
+            subModuleDefinition activity = null;
+            if (!string.IsNullOrWhiteSpace(subModuleId))
+                activity = _currentModule.subModules
+                    .FirstOrDefault(mod => mod.id == subModuleId);
+
+            //add if it doesn't exist
+            if (activity == null)
+            {
+                activity = new subModuleDefinition() { id = Guid.NewGuid().ToString("N"),
+                    moduleFields = new List<fieldProperties>() };
+                _currentModule.subModules.Add(activity);
+                setValue(textSubModuleId, activity.id);
+            }
+
+            //activity.id = subModuleId;
+            activity.name = subModuleName;
+            activity.description = subModuleDescription;
+            activity.version = subModuleVersion;
+
+            //refresh the activities list
+            updateActivitiesList(_currentModule.subModules);
         }
         private void cancelSubModuleChanges_click(object sender, RoutedEventArgs e)
         {
             //discard changes and clear the fields
-
+            //clear the form
         }
 
         private void openExisting_click(object sender, RoutedEventArgs e)
@@ -164,6 +239,11 @@ namespace desktop_builder
                 var module = new moduleDefinition() { id = Guid.NewGuid().ToString("N") };
                 updateView(module);
             }            
+        }
+
+        void showDialog(string msg)
+        {
+            MessageBox.Show(msg, "No module selected", MessageBoxButton.OK);
         }
     }
 }

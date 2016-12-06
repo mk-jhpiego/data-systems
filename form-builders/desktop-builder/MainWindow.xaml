@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="900" Width="1440" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid>
+        <!--<MainWindow.Resources>
+            <Style TargetType="{x:Type TextBlock}" x:Key="WrapText">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+            </Style>
+        </MainWindow.Resources>-->
         <Grid.RowDefinitions>
             <RowDefinition Height="55"/>
             <RowDefinition Height="Auto"/>
@@ -46,6 +51,7 @@
             <Button Click="cancelButton_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2" Margin="15" >
+            <TextBox IsTabStop="False" Name="textSubModuleId" Height="0"/>
             <Label Content="Activity Name" Foreground="#FF305B75"/>
             <TextBox Name="textSubModuleName" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="Version" Foreground="#FF305B75"/>
@@ -57,13 +63,38 @@
             <Button Click="cancelSubModuleChanges_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
 
             <Label Content="Current Activities " Foreground="#FF305B75" FontSize="20"/>
-            <ListView Name="lstModuleActivities" Width="Auto" Background="Maroon" Height="Auto">
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-                <ListItem></ListItem>
-            </ListView>
+            <DataGrid Name="gridModuleActivities" SelectedItem="moduleActivitySelected"
+            Height="Auto" AutoGenerateColumns="False" ItemsSource="{Binding list}" 
+                      IsReadOnly="True" CanUserDeleteRows="false" CanUserAddRows="False" CanUserSortColumns="True"
+                      RowHeight="55" 
+                      >                
+                <DataGrid.Columns >
+                    <DataGridTextColumn x:Name="colActivityId" Visibility="Collapsed" Binding="{Binding id}" Header="Name" Width="0"  />
+                    <DataGridTextColumn x:Name="colActivityName" Binding="{Binding name}" Header="Name" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn x:Name="colActivityDescription" 
+                                        Binding="{Binding description}" 
+                                        Header="Description" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+                <DataGrid.ItemContainerStyle>
+                    <Style TargetType="DataGridRow">
+                        <EventSetter Event="MouseDoubleClick" Handler="actvitiesRowSelected"/>
+                    </Style>
+                </DataGrid.ItemContainerStyle>
+            </DataGrid>
         </StackPanel>
 
         <StackPanel Orientation="Vertical" Grid.Column="3" Grid.Row="2" Margin="25" >
