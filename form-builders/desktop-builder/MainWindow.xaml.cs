@@ -79,6 +79,7 @@ namespace desktop_builder
                 setValue(fieldTextMaxLength, module.textConstraints.maxLength);
 
             setValue(module.isRequired, fieldIsRequiredYes, fieldIsRequiredNo);
+            setValue(module.isIndexed, fieldIsIndexedYes, fieldIsIndexedNo);
             if (module.dateConstraints != null)
             {
                 setValue(fieldTextDateMin, module.dateConstraints.minimum);
@@ -135,7 +136,7 @@ namespace desktop_builder
             module.questionName = textRequiredValidationRules.getValue(fieldTextQuestionName);
 
             module.isRequired = getCheckedItem(fieldIsRequiredYes, fieldIsRequiredNo);
-
+            module.isIndexed = getCheckedItem(fieldIsIndexedYes, fieldIsIndexedNo);
             module.numberConstraints = null;
             module.dateConstraints = null;
             module.textConstraints = null;

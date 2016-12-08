@@ -53,6 +53,7 @@ namespace desktop_builder
         public List<string> fieldChoices { get; set; }
         public string questionName { get; set; }
         public string isRequired { get; set; }
+        public string isIndexed { get; set; }
         public minmaxConstraints numberConstraints { get; set; }
         public textConstraints textConstraints { get; set; }
         public minmaxConstraints dateConstraints { get; set; }

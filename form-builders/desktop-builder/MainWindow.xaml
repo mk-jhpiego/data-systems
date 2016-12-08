@@ -233,6 +233,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Column="0" Grid.Row="0" Content="Minimum" Foreground="#FF305B75"/>
                 <TextBox MinWidth="200" Grid.Column="1" Grid.Row="0" Name="fieldTextMinimum" FontSize="20" FontFamily="Gill Sans MT">
@@ -268,6 +269,10 @@
                 <TextBox MinWidth="200" Grid.Column="1" Grid.Row="6" Name="fieldTextDateMax" FontSize="20" FontFamily="Gill Sans MT">
                     <Binding Path="DateMax" Mode="TwoWay" />
                 </TextBox>
+                <Label Grid.Column="0" Grid.Row="7" Content="Is Indexed" Foreground="#FF305B75"/>
+                <RadioButton Name="fieldIsIndexedYes" Grid.Column="1" Grid.Row="7" GroupName="isIndexed" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
+                <RadioButton IsChecked="True" Name="fieldIsIndexedNo" Grid.Column="1" Grid.Row="7" Margin="100,0,0,0" GroupName="isIndexed" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
+
             </Grid>
             <Grid >
                 <Grid.ColumnDefinitions>
