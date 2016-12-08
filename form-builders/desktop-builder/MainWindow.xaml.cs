@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace desktop_builder
 {
@@ -33,6 +35,189 @@ namespace desktop_builder
         {
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
+        }
+
+        //actvityFieldRowSelected
+        private void actvityFieldRowSelected(object sender, MouseButtonEventArgs e)
+        {
+            var selectedRow = gridActivityFields.SelectedItem;
+            if (selectedRow == null) return;
+            var moduleActivity = selectedRow as fieldProperties;
+            if (moduleActivity == null) return;
+
+            //we update the view with these details
+            updateFieldEditor(moduleActivity);
+        }
+
+        void updateFieldEditor(fieldProperties module)
+        {
+            //first we clear it
+            clearFieldEditor();
+
+            setValue(fieldTextUniqueId, module.uniqueId);
+
+            var allRadioButtons =
+                (from panel in new List<StackPanel> { dataTypeParent1, dataTypeParent2 }
+                 let children = panel.Children.OfType<RadioButton>()
+                 from child in children
+                 select child).ToList();
+            setValue(module.dataType, allRadioButtons);
+            if (module.fieldChoices != null)
+            {
+                setValue(textFieldChoices,
+                    string.Join(Environment.NewLine, module.fieldChoices));
+            }
+            setValue(fieldTextQuestionName, module.questionName);
+            setValue(fieldTextQuestion, module.question);
+            if (module.numberConstraints != null)
+            {
+                setValue(fieldTextMinimum, module.numberConstraints.minimum);
+                setValue(fieldTextMaximum, module.numberConstraints.maximum);
+            }
+
+            if (module.textConstraints != null)
+                setValue(fieldTextMaxLength, module.textConstraints.maxLength);
+
+            setValue(module.isRequired, fieldIsRequiredYes, fieldIsRequiredNo);
+            if (module.dateConstraints != null)
+            {
+                setValue(fieldTextDateMin, module.dateConstraints.minimum);
+                setValue(fieldTextDateMax, module.dateConstraints.maximum);
+            }
+            //setValue(textSubModuleName, module.name);
+            //setValue(textSubModuleVersion, module.version);
+            //setValue(textSubModuleDescription, module.description);
+        }
+
+        void clearFieldEditor()
+        {
+            setValue(fieldTextUniqueId, "");
+            setValue(fieldTextQuestion, "");
+            var allRadioButtons =
+(from panel in new List<StackPanel> { dataTypeParent1, dataTypeParent2 }
+ let children = panel.Children.OfType<RadioButton>()
+ from child in children
+ select child).ToList();
+            setValue("KUMBAYA", allRadioButtons);
+            setValue(textFieldChoices, "");
+            setValue(fieldTextQuestionName, "");
+
+            setValue(fieldTextMinimum, "");
+            setValue(fieldTextMaximum, "");
+            setValue(fieldTextMaxLength, "");
+
+            setValue("KUMBAYA", fieldIsRequiredYes, fieldIsRequiredNo);
+            setValue(fieldTextDateMin, "");
+            setValue(fieldTextDateMax, "");
+        }
+
+        void updateFieldProperties(fieldProperties module)
+        {
+            var validationRes = textRequiredValidationRules.ValidateControl(fieldTextQuestion);
+            if (!validationRes.IsValid)
+            {
+                return;
+            }
+            module.question = textRequiredValidationRules.getValue(fieldTextQuestion);
+
+            var allRadioButtons =
+    (from panel in new List<StackPanel> { dataTypeParent1, dataTypeParent2 }
+     let children = panel.Children.OfType<RadioButton>()
+     from child in children
+     select child).ToList();
+            module.dataType = getCheckedItem(allRadioButtons);
+
+            validationRes = textRequiredValidationRules.ValidateControl(fieldTextQuestionName);
+            if (!validationRes.IsValid)
+            {
+                return;
+            }
+            module.questionName = textRequiredValidationRules.getValue(fieldTextQuestionName);
+
+            module.isRequired = getCheckedItem(fieldIsRequiredYes, fieldIsRequiredNo);
+
+            module.numberConstraints = null;
+            module.dateConstraints = null;
+            module.textConstraints = null;
+
+            if (module.dataType == "Single Select" || module.dataType == "Multiple Select")
+            {
+                var res = multiLineValidationRules.ValidateControl(textFieldChoices);
+                if (!res.IsValid)
+                { return; }
+                var choices = multiLineValidationRules.getValueMultiline(textFieldChoices);
+                module.fieldChoices = choices;
+            }
+            else if (module.dataType== "Number" || module.dataType == "Integer")
+            {
+                var res = intValidationRule.ValidateControl(fieldTextMinimum);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+                res = intValidationRule.ValidateControl(fieldTextMaximum);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+
+                res = minmaxValidationRule.ValidateControl(fieldTextMinimum, fieldTextMaximum);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+
+                var numberConstraints = minmaxValidationRule.
+                    getValues(fieldTextMinimum, fieldTextMaximum);
+                if (numberConstraints.minimum == Constants.NULL_NUM)
+                    numberConstraints = null;
+                module.numberConstraints = numberConstraints;
+           }
+            else if (module.dataType == "Text")
+            {
+                //DateMinMaxValidationRules
+                var res = intValidationRule.ValidateControl(fieldTextMaxLength);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+                res = gtZeroValidationRules.ValidateControl(fieldTextMaxLength);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+                var maxLength = intValidationRule.getValue(fieldTextMaxLength);
+                module.textConstraints = new textConstraints() { maxLength = maxLength };
+            }
+            else if (module.dataType == "Date")
+            {
+                var res = dateValidationRules.ValidateControl(fieldTextDateMin);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+                res = dateValidationRules.ValidateControl(fieldTextDateMax);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+
+                res = dateMinMaxValidationRules.ValidateControl(
+                    fieldTextDateMin, fieldTextDateMax);
+                if (!res.IsValid)
+                {
+                    return;
+                }
+
+                var numberConstraints = dateMinMaxValidationRules.
+                    getValues(fieldTextDateMin, fieldTextDateMax);
+                if (numberConstraints.minimum == Constants.NULL_NUM)
+                    numberConstraints = null;
+                module.dateConstraints = numberConstraints;
+            }
+
+            //we clear the current view
+            clearFieldEditor();
         }
 
         private void actvitiesRowSelected(object sender, MouseButtonEventArgs e)
@@ -59,12 +244,24 @@ namespace desktop_builder
 
         private void updateFieldPropertiesList(subModuleDefinition module)
         {
-            
+            //gridActivityFields
+            labelActivityName.Content = "Current editing - " + module.name;
+            module.moduleFields = module.moduleFields ?? new List<fieldProperties>();
+            gridActivityFields.ItemsSource = "";
+            gridActivityFields.ItemsSource = module.moduleFields;
         }
 
         private void closeButton_click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+        void setValue(TextBox control, int textOption)
+        {
+            setValue(control, textOption.ToString());
+        }
+        void setValue(TextBox control, long textOption)
+        {
+            setValue(control, textOption.ToString());
         }
 
         void setValue(TextBox control, string textOption)
@@ -73,7 +270,12 @@ namespace desktop_builder
             control.Text = textOption;
         }
 
-        void setValue(string textOption, params RadioButton[] controls)
+        void setValue(string textOption, params RadioButton[] controls)        
+        {
+            setValue(textOption, controls.ToList());
+        }
+
+        void setValue(string textOption, List<RadioButton> controls)
         {
             foreach (var control in controls)
             {
@@ -97,22 +299,49 @@ namespace desktop_builder
             return string.IsNullOrWhiteSpace(control.Text) ? "" : control.Text;
         }
 
-        string getCheckedItem(params RadioButton[] controls)
+        string getCheckedItem(List<RadioButton> controls)
         {
             var selectedControl = controls.Where(control => control.IsChecked != null && control.IsChecked == true)
                 .FirstOrDefault();
             return selectedControl == null ? "" : selectedControl.Content.ToString();
         }
 
-        void updateModuleDefinition(moduleDefinition module)
+        string getCheckedItem(params RadioButton[] controls)
         {
-            module.name = getValue(textModuleName);
+            return getCheckedItem(controls.ToList());
+        }
+
+        bool updateModuleDefinition(moduleDefinition module)
+        {
+            var toReturn = false;
+            var validationRes = textRequiredValidationRules.ValidateControl(textModuleName);
+            if (!validationRes.IsValid)
+            {
+                return toReturn;
+            }
+            module.name = textRequiredValidationRules.getValue(textModuleName);
+
             module.description = getValue(textModuleDescription);
-            module.version = getValue(textModuleVersion);
+
+            validationRes = textRequiredValidationRules.ValidateControl(textModuleVersion);
+            if (!validationRes.IsValid)
+            {
+                return toReturn;
+            }
+            module.version = textRequiredValidationRules.getValue(textModuleVersion);
+
+
             var moduleTypeOption = getCheckedItem(
                 rdbModTypePerson, rdbModTypeNonPerson, rdbModTypeGroup);
             module.moduleType = moduleTypeOption;
-            module.userId = getValue(textEmailAddress);
+
+            validationRes = textRequiredValidationRules.ValidateControl(textEmailAddress);
+            if (!validationRes.IsValid)
+            {
+                return toReturn;
+            }
+            module.userId = textRequiredValidationRules.getValue(textEmailAddress);
+            return true;
         }
 
         void updateView(moduleDefinition module)
@@ -142,7 +371,9 @@ namespace desktop_builder
         {
             //we update the module definition
             _currentModule = _currentModule ?? new moduleDefinition() { id = Guid.NewGuid().ToString("N"), subModules=new List<subModuleDefinition>() };
-            updateModuleDefinition(_currentModule);
+            var validates = updateModuleDefinition(_currentModule);
+            if (!validates)
+                return;
 
             //and save
             var name = _currentModule.name.Replace(' ', '-').ToLowerInvariant() + ".json";
@@ -157,8 +388,49 @@ namespace desktop_builder
 
         //addField_click
         private void addField_click(object sender, RoutedEventArgs e) {
-            //weread the field values and clear the form
+            //we get the current activity
+            var activityId = getValue(textSubModuleId);
+            if (string.IsNullOrWhiteSpace(activityId))
+            {
+                showDialog("Please select an activity first");
+                return;
+            }
 
+            var currentActivity = _currentModule.subModules
+                .FirstOrDefault(t => t.id == activityId);
+            if (currentActivity == null)
+            {
+                showDialog("An unknown error occurred. Could not find named activity");
+                return;
+            }
+
+            //we read the field values and clear the form
+            //we check if we have a field id and find the target record
+            var fieldId = getValue(fieldTextUniqueId);
+            fieldProperties currentField = null;
+            if (string.IsNullOrWhiteSpace(fieldId))
+            {
+                //means this is a new record
+                currentField = new fieldProperties() { uniqueId = 
+                    Guid.NewGuid().ToString("N") };
+                currentActivity.moduleFields.Add(currentField);
+                setValue(fieldTextUniqueId, currentField.uniqueId);
+            }
+            else
+            {
+                //we attempt to locate it
+                currentField = currentActivity.moduleFields.FirstOrDefault(t => t.uniqueId == fieldId);
+                if (currentField == null)
+                {
+                    showDialog("An unknown error occurred. Could not find named field");
+                    return;
+                }
+            }
+
+            updateFieldProperties(currentField);
+            //update activity fields
+
+            updateFieldPropertiesList(currentActivity);
         }
         //cancelAddField_click
         private void cancelAddField_click(object sender, RoutedEventArgs e) {
@@ -180,9 +452,23 @@ namespace desktop_builder
 
             //we get all the values
             var subModuleId = getValue(textSubModuleId);
-            var subModuleName = getValue(textSubModuleName);
+
+            var validationRes = textRequiredValidationRules.ValidateControl(textSubModuleName);
+            if (!validationRes.IsValid)
+            {
+                return;
+            }
+            var subModuleName = textRequiredValidationRules.getValue(textSubModuleName);
+
             var subModuleDescription = getValue(textSubModuleDescription);
-            var subModuleVersion = getValue(textSubModuleVersion);
+
+            validationRes = textRequiredValidationRules.ValidateControl(textSubModuleVersion);
+            if (!validationRes.IsValid)
+            {
+                return;
+            }
+            var subModuleVersion = textRequiredValidationRules.getValue(textSubModuleVersion);
+           // var subModuleVersion = getValue(textSubModuleVersion);
 
             //check if this activity exist by id
             subModuleDefinition activity = null;
@@ -244,6 +530,13 @@ namespace desktop_builder
         void showDialog(string msg)
         {
             MessageBox.Show(msg, "No module selected", MessageBoxButton.OK);
+        }
+
+        private void fieldTextQuestion_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            fieldTextQuestionName.Text = Regex.Replace(
+                fieldTextQuestion.Text.ToLowerInvariant(),
+                "[^a-zA-Z0-9 -]+", string.Empty, RegexOptions.Compiled);
         }
     }
 }

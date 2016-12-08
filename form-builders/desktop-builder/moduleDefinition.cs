@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace desktop_builder
 {
@@ -30,14 +32,12 @@ namespace desktop_builder
     //class moduleRelationships
     //{
     //}
-
-    class minMaxConstraint
+    class minmaxConstraints
     {
         public long minimum { get; set; }
         public long maximum { get; set; }
     }
-
-    class maxLenConstraint
+    class textConstraints
     {
         public int maxLength { get; set; }
     }
@@ -53,7 +53,25 @@ namespace desktop_builder
         public List<string> fieldChoices { get; set; }
         public string questionName { get; set; }
         public string isRequired { get; set; }
-        public minMaxConstraint minMax { get; set; }
-        public maxLenConstraint maxLength { get; set; }
+        public minmaxConstraints numberConstraints { get; set; }
+        public textConstraints textConstraints { get; set; }
+        public minmaxConstraints dateConstraints { get; set; }
+        //public maxLenConstraint maxLength { get; set; }
+    }
+
+    static class Constants
+    {
+        public const int NULL_NUM = int.MinValue;
+        public const int ERROR_NUM = -9999999;
+        public const int MINDATE = 19000101;
+        public const int MAXDATE = 21001231;
+        public const int ATTODAYDATECONSTANT = 21001230;
+        public const string TODAY = "@today";
+
+
+        public static int toInt(this string stringVal)
+        {
+            return Convert.ToInt32(stringVal);
+        }
     }
 }
