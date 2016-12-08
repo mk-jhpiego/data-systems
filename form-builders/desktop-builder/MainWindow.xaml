@@ -124,8 +124,13 @@
             </DataGrid>
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="2" Margin="15" >
-            <Label Name ="labelActivityName"  Content="Current editing - " Foreground="#FF305B75" FontSize="20"/>
+            <Label Name ="labelActivityName"  Content="Currently editing - " Foreground="#FF305B75" FontSize="20"/>
             <Label Content="List of available fields" Foreground="#FF305B75"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Click="changeOrderButton_click"  Margin="5" Content="Move Up" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+                <Button Click="changeOrderButton_click" Margin="5" Content="Move Lower" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+                <Button Click="deleteFieldButton_click" Margin="5" Content="Delete" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+            </StackPanel>
             <DataGrid Name="gridActivityFields"
             Height="Auto" AutoGenerateColumns="False" ItemsSource="{Binding list}" 
                       IsReadOnly="True" CanUserDeleteRows="false" CanUserAddRows="False" CanUserSortColumns="True"

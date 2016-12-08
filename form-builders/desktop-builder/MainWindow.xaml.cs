@@ -244,8 +244,11 @@ namespace desktop_builder
 
         private void updateFieldPropertiesList(subModuleDefinition module)
         {
+            //sort
+            sortFields(module.moduleFields);
+
             //gridActivityFields
-            labelActivityName.Content = "Current editing - " + module.name;
+            labelActivityName.Content = "Currently editing - " + module.name;
             module.moduleFields = module.moduleFields ?? new List<fieldProperties>();
             gridActivityFields.ItemsSource = "";
             gridActivityFields.ItemsSource = module.moduleFields;
@@ -411,8 +414,12 @@ namespace desktop_builder
             if (string.IsNullOrWhiteSpace(fieldId))
             {
                 //means this is a new record
-                currentField = new fieldProperties() { uniqueId = 
-                    Guid.NewGuid().ToString("N") };
+                currentField = new fieldProperties()
+                {
+                    uniqueId =
+                    Guid.NewGuid().ToString("N"),
+                    position = currentActivity.moduleFields.Count - 1
+                };
                 currentActivity.moduleFields.Add(currentField);
                 setValue(fieldTextUniqueId, currentField.uniqueId);
             }
@@ -525,6 +532,147 @@ namespace desktop_builder
                 var module = new moduleDefinition() { id = Guid.NewGuid().ToString("N") };
                 updateView(module);
             }            
+        }
+
+        //deleteFieldButton_click
+        private void changeOrderButton_click(object sender, RoutedEventArgs e)
+        {         
+            var fieldId = getCurrentFieldId();
+            if (fieldId == "0") return;
+
+            var activityId = getCurrentActivityId();
+            if (activityId == "0") return;
+
+            var actvity = _currentModule.subModules.FirstOrDefault(t => t.id == activityId);
+            if (actvity == null)
+            {
+                showDialog("An unknown issue occurred. Action not performed. Please restart the application");
+                return;
+            }
+
+            renumberFields(actvity);
+            
+            var field = actvity.moduleFields.FirstOrDefault(x => x.uniqueId == fieldId);
+
+            //we ascertain the action to perform
+            var button = sender as Button;
+            if (button == null) return;
+            if(button.Content.ToString()== "Move Up")
+            {
+                //check if we are at the top
+                if (field.position <= 0)
+                    return;
+
+                var field2 = actvity.moduleFields.FirstOrDefault(x => x.position == field.position - 1);
+                //this shouldn't occur as we just renumbered them
+                if (field2 == null) return;
+                field.position--;
+                field2.position++;
+            }
+            else
+            {
+                //we go down
+                //check if we are rock bottom
+                if (field.position >= actvity.moduleFields.Count)
+                { return; }
+                
+                var field2 = actvity.moduleFields.FirstOrDefault(x => x.position == field.position + 1);
+                //this shouldn't occur as we just renumbered them
+                if (field2 == null) return;
+                field.position++;
+                field2.position--;
+            }
+
+            sortFields(actvity.moduleFields);
+            updateFieldPropertiesList(actvity);
+        }
+
+        string getCurrentActivityId()
+        {
+            if (_currentModule == null)
+            {
+                showDialog("Please select a module first");
+                return "0";
+            }
+
+            var submoduleId = textRequiredValidationRules.getValue(textSubModuleId);
+            if (string.IsNullOrWhiteSpace(submoduleId))
+            {
+                showDialog("Please select an activity");
+                return "0";
+            }
+            return submoduleId;
+        }
+
+        string getCurrentFieldId()
+        {
+            if (_currentModule == null)
+            {
+                showDialog("Please select a module first");
+                return "0";
+            }
+
+            var submoduleId = textRequiredValidationRules.getValue(textSubModuleId);
+            if (string.IsNullOrWhiteSpace(submoduleId))
+            {
+                showDialog("Please select an activity");
+                return "0";
+            }
+
+            //we get the field id
+            var fieldId = textRequiredValidationRules.getValue(fieldTextUniqueId);
+            if (string.IsNullOrWhiteSpace(fieldId))
+            {
+                showDialog("Please select the field to delete. Double click a field to select it");
+                return "0";
+            }
+            return fieldId;
+        }
+
+        private void deleteFieldButton_click(object sender, RoutedEventArgs e)
+        {
+            var fieldId = getCurrentFieldId();
+            if (fieldId == "0") return;
+
+            //warn that they wil lose data before attempting to close
+            var msg = MessageBox.Show("Are you sure you want to remove this field? This action can not be reversed", "Confirm action", MessageBoxButton.OKCancel);
+            if (msg == MessageBoxResult.OK)
+            {
+                var activityId = getCurrentActivityId();
+                if (activityId == "0") return;
+
+                var actvity = _currentModule.subModules.FirstOrDefault(t => t.id == activityId);
+                if (actvity == null)
+                {
+                    showDialog("An unknown issue occurred. Action not performed. Please restart the application");
+                    return;
+                }
+
+                //remove from the module fields
+                var field = actvity.moduleFields.FirstOrDefault(x => x.uniqueId == fieldId);
+                actvity.moduleFields.Remove(field);
+
+                //refresh the view
+                clearFieldEditor();
+
+                //renumber the fields
+                renumberFields(actvity);
+
+                updateFieldPropertiesList(actvity);
+            }
+        }
+
+        private void renumberFields(subModuleDefinition actvity)
+        {
+            for (var i = 0; i < actvity.moduleFields.Count; i++)
+            {
+                actvity.moduleFields[i].position = i;
+            }
+        }
+
+        private void sortFields(List<fieldProperties> moduleFields)
+        {
+            moduleFields.Sort((x, y) => x.position.CompareTo(y.position));
         }
 
         void showDialog(string msg)
