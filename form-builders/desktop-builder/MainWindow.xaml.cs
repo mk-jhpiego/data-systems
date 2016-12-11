@@ -113,6 +113,78 @@ namespace desktop_builder
             setValue("KUMBAYA", fieldIsIndexedYes, fieldIsIndexedNo);
         }
 
+        void updateGroupView(IEnumerable<fieldProperties> fields)
+        {
+            clearGroupPanel();
+            var first = fields.FirstOrDefault();// t => !string.IsNullOrWhiteSpace(t.groupName));
+            if (first != null)
+            {
+                setValue(fieldTextGroupName, first.groupName ?? "");
+                setValue(fieldGroupPageNumber, first.pageNumber);
+                var areSingleSelect = isSingleSelectAndAreConsistent(fields);
+                if (areSingleSelect)
+                {
+                    setValue((first.displayAsBlock ? "Yes" : "No"),
+                        fieldDisplayAsBlockYes, fieldDisplayAsBlockNo);
+                }
+            }
+        }                
+
+        void updateGroupProperties(IEnumerable<fieldProperties> fields)
+        {
+            //fieldTextGroupName
+            var groupName = textRequiredValidationRules.getValue(fieldTextGroupName);
+
+            //fieldGroupPageNumber
+            var res = intValidationRule.ValidateControl(fieldGroupPageNumber);
+            if (!res.IsValid)
+            {
+                return;
+            }
+
+            //update details
+            var areSingleSelect = isSingleSelectAndAreConsistent(fields);
+            var displayAsBlock = false;
+            if (areSingleSelect)
+            {
+                //fieldDisplayAsBlockYes, fieldDisplayAsBlockNo
+                var checkedOption = getCheckedItem(fieldDisplayAsBlockYes, fieldDisplayAsBlockNo);
+                if (!string.IsNullOrWhiteSpace(checkedOption))
+                {
+                    displayAsBlock = checkedOption == "Yes";
+                }
+            }
+            
+            foreach (var field in fields)
+            {
+                if (!string.IsNullOrWhiteSpace(groupName))
+                {
+                    field.groupName = groupName;
+                }
+
+                if (areSingleSelect)
+                {
+                    field.displayAsBlock = displayAsBlock;
+                }
+
+                var pageNum = intValidationRule.getValue(fieldGroupPageNumber);
+                if (pageNum != Constants.NULL_NUM)
+                {
+                    field.pageNumber = pageNum;
+                }
+            }
+
+            //clear the group panel
+            clearGroupPanel();
+        }
+
+        void clearGroupPanel()
+        {
+            setValue(fieldTextGroupName, "");
+            setValue(fieldGroupPageNumber, "");
+            setValue("KUMBAYA", fieldDisplayAsBlockYes, fieldDisplayAsBlockNo);
+        }
+
         void updateFieldProperties(fieldProperties module)
         {
             var validationRes = textRequiredValidationRules.ValidateControl(fieldTextQuestion);
@@ -407,9 +479,7 @@ namespace desktop_builder
             {
                 showDialog("An unknown error occurred. Could not find named activity");
                 return;
-            }
-
-            var isGroupMode
+            }            
 
             //we read the field values and clear the form
             //we check if we have a field id and find the target record
@@ -417,17 +487,29 @@ namespace desktop_builder
             fieldProperties currentField = null;
             if (string.IsNullOrWhiteSpace(fieldId))
             {
-                //means this is a new record
-                currentField = new fieldProperties()
+                //either is in group mode or is a new record
+                if(gridActivityFields.SelectedItems!=null && gridActivityFields.SelectedItems.Count > 1)
                 {
-                    uniqueId =
-                    Guid.NewGuid().ToString("N"),
-                    position = currentActivity.moduleFields.Count - 1
-                };
+                    //is in group mode
+                    //we get all the fields
+                    var fields = gridActivityFields.SelectedItems;
+                    updateGroupProperties(fields.Cast<fieldProperties>().ToList());
+                    return;
+                }
+                else
+                {
+                    //means this is a new record
+                    currentField = new fieldProperties()
+                    {
+                        uniqueId =
+                        Guid.NewGuid().ToString("N"),
+                        position = currentActivity.moduleFields.Count - 1
+                    };
 
-                //todo: make changes to a copy and add to main list once user confirms
-                currentActivity.moduleFields.Add(currentField);
-                setValue(fieldTextUniqueId, currentField.uniqueId);
+                    //todo: make changes to a copy and add to main list once user confirms
+                    currentActivity.moduleFields.Add(currentField);
+                    setValue(fieldTextUniqueId, currentField.uniqueId);
+                }
             }
             else
             {
@@ -695,6 +777,30 @@ namespace desktop_builder
             //    "[^a-zA-Z0-9 -]+", string.Empty, RegexOptions.Compiled);
         }
 
+        bool isSingleSelectAndAreConsistent(IEnumerable<fieldProperties> selectedRows)
+        {
+            return ofSameType(selectedRows) && haveSameChoices(selectedRows);
+        }
+
+        bool ofSameType(IEnumerable<fieldProperties> selectedRows)
+        {
+            var first = selectedRows.First();
+            var ofSameType = selectedRows.All(
+                t => t.dataType == "Single Select"
+                && t.fieldChoices != null && t.fieldChoices.Count == first.fieldChoices.Count);
+            return ofSameType;
+        }
+
+        bool haveSameChoices(IEnumerable<fieldProperties> selectedRows)
+        {
+            var first = selectedRows.First();
+            var haveSameChoices =
+                (from field in selectedRows
+                 from choice in field.fieldChoices
+                 select first.fieldChoices.Contains(choice)).All(t => t);
+            return haveSameChoices;
+        }
+
         private void gridActivityFields_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (gridActivityFields.SelectedItems!=null && gridActivityFields.SelectedItems.Count > 1)
@@ -721,19 +827,11 @@ namespace desktop_builder
                 stackTableDisplayOptions.IsEnabled = false;
 
                 var selectedRows = gridActivityFields.SelectedItems.Cast<fieldProperties>();
-                var first = selectedRows.First();
-                var ofSameType = selectedRows.All(
-                    t => t.dataType == "Single Select"
-                    && t.fieldChoices != null && t.fieldChoices.Count == first.fieldChoices.Count);
-
-                if (ofSameType)
+                if (ofSameType(selectedRows))
                 {
-                    var haveSameChoices =
-                        (from field in selectedRows
-                         from choice in field.fieldChoices
-                         select first.fieldChoices.Contains(choice)).All(t => t);
-                    stackTableDisplayOptions.IsEnabled = haveSameChoices;
+                    stackTableDisplayOptions.IsEnabled = haveSameChoices(selectedRows);
                 }
+                updateGroupView(selectedRows);
             }
             else if (gridActivityFields.SelectedItems != null && gridActivityFields.SelectedItems.Count == 1)
             {

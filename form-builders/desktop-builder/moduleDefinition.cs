@@ -44,6 +44,10 @@ namespace desktop_builder
 
     class fieldProperties
     {
+        internal int pageNumber { get; set; }
+        internal bool displayAsBlock { get; set; }
+        internal string groupName { get; set; }
+
         public bool isDeprecated { get; set; }
         public string uniqueId { get; set; }
 
