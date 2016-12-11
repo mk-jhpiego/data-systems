@@ -134,7 +134,7 @@
             <DataGrid Name="gridActivityFields"
             Height="Auto" AutoGenerateColumns="False" ItemsSource="{Binding list}" 
                       IsReadOnly="True" CanUserDeleteRows="false" CanUserAddRows="False" CanUserSortColumns="True"
-                      RowHeight="30" 
+                      RowHeight="30" SelectionChanged="gridActivityFields_SelectionChanged" 
                       >
                 <DataGrid.Columns >
                     <DataGridTextColumn x:Name="colFieldId" Visibility="Collapsed" Binding="{Binding uniqueId}" Header="uniqueId" Width="0"  />
@@ -172,7 +172,25 @@
         </StackPanel>
 
         <StackPanel Orientation="Vertical" Grid.Column="3" Grid.Row="2" Margin="25" >
-            <TextBox Visibility="Collapsed" IsTabStop="False" Name="fieldTextUniqueId" FontSize="20" FontFamily="Gill Sans MT"/>
+            <StackPanel Name="stackGroupAttributes" Visibility="Collapsed">
+                <Label Content="Group/Section Display Options" Foreground="#FF305B75" FontSize="15"/>
+                <Label Content="Grouped items may appear on the same page" Foreground="#FF305B75"/>
+                <Label Content="Group Name" Foreground="#FF305B75" FontSize="20"/>
+                <TextBox Name="fieldTextGroupName" FontSize="20" FontFamily="Gill Sans MT">
+                    <Binding Path="FieldGroupName" Mode="TwoWay" />                    
+                </TextBox>
+                <StackPanel Name="stackTableDisplayOptions">
+                <Label Grid.Column="0" Grid.Row="3" Content="Display selected fields as table" Foreground="#FF305B75"/>
+                <RadioButton Name="fieldDisplayAsBlockYes" GroupName="displayGroupAsBlock" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
+                <RadioButton Name="fieldDisplayAsBlockNo" GroupName="displayGroupAsBlock" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
+                </StackPanel>
+                <Label Content="Page Number" Foreground="#FF305B75" FontSize="20"/>
+                <TextBox Name="fieldGroupPageNumber" FontSize="20" FontFamily="Gill Sans MT">
+                    <Binding Path="PageNumber" Mode="TwoWay" />
+                </TextBox>
+            </StackPanel>
+            <StackPanel Name="stackFieldAttributes">
+                <TextBox Visibility="Collapsed" IsTabStop="False" Name="fieldTextUniqueId" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="Question" Foreground="#FF305B75"/>
             <TextBox Name="fieldTextQuestion" FontSize="20" FontFamily="Gill Sans MT" TextChanged="fieldTextQuestion_TextChanged">
                 <Binding Path="Question" Mode="TwoWay" />
@@ -205,19 +223,11 @@
                 <TextBox.Text>
                     <Binding Path="FieldChoices" Mode="TwoWay" />
                 </TextBox.Text>
-                <!--<TextBox.Text>
-                    <Binding Path="TextBinded" Mode="TwoWay">
-                        <Binding.ValidationRules>
-                            <local:MultiLineValidationRules x:Name="multiLineValidationRules">
-                            </local:MultiLineValidationRules>
-                        </Binding.ValidationRules>
-                    </Binding>
-                </TextBox.Text>-->
             </TextBox>
             <Label Content="Short Question Name (optional for labels)" Foreground="#FF305B75"/>
             <TextBox Name="fieldTextQuestionName" FontSize="20" FontFamily="Gill Sans MT">
                 <Binding Path="NumMin" Mode="TwoWay" />
-            </TextBox>
+            </TextBox>            
             <Label Content="Validations" Foreground="#FF305B75" FontSize="20"/>
             <Label Content="Allowed Ranges (Min / Max)" Foreground="#FF305B75"/>
             <Grid>
@@ -274,12 +284,14 @@
                 <RadioButton IsChecked="True" Name="fieldIsIndexedNo" Grid.Column="1" Grid.Row="7" Margin="100,0,0,0" GroupName="isIndexed" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
 
             </Grid>
-            <Grid >
+        </StackPanel>
+        
+        <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Click="addField_click" Margin="5" Content="Add Field" HorizontalAlignment="Center" Height="45" Width="150" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
+                <Button Grid.Column="0" Click="addField_click" Margin="5" Content="Confirm Changes" HorizontalAlignment="Center" Height="45" Width="150" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
                 <Button Grid.Column="1" Click="cancelAddField_click" Margin="5" Content="Discard Changes" HorizontalAlignment="Center" Height="45" Width="150" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
             </Grid>
 

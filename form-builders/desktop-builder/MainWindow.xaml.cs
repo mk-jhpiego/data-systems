@@ -110,6 +110,7 @@ namespace desktop_builder
             setValue("KUMBAYA", fieldIsRequiredYes, fieldIsRequiredNo);
             setValue(fieldTextDateMin, "");
             setValue(fieldTextDateMax, "");
+            setValue("KUMBAYA", fieldIsIndexedYes, fieldIsIndexedNo);
         }
 
         void updateFieldProperties(fieldProperties module)
@@ -408,6 +409,8 @@ namespace desktop_builder
                 return;
             }
 
+            var isGroupMode
+
             //we read the field values and clear the form
             //we check if we have a field id and find the target record
             var fieldId = getValue(fieldTextUniqueId);
@@ -421,12 +424,15 @@ namespace desktop_builder
                     Guid.NewGuid().ToString("N"),
                     position = currentActivity.moduleFields.Count - 1
                 };
+
+                //todo: make changes to a copy and add to main list once user confirms
                 currentActivity.moduleFields.Add(currentField);
                 setValue(fieldTextUniqueId, currentField.uniqueId);
             }
             else
             {
                 //we attempt to locate it
+                //todo: make changes to a copy and add to main list once user confirms
                 currentField = currentActivity.moduleFields.FirstOrDefault(t => t.uniqueId == fieldId);
                 if (currentField == null)
                 {
@@ -443,7 +449,8 @@ namespace desktop_builder
         //cancelAddField_click
         private void cancelAddField_click(object sender, RoutedEventArgs e) {
             //discard changes and clear the fields
-
+            //we clear the current view
+            clearFieldEditor();
         }
 
         private void saveSubModuleChangesButton_click(object sender, RoutedEventArgs e)
@@ -683,9 +690,56 @@ namespace desktop_builder
 
         private void fieldTextQuestion_TextChanged(object sender, TextChangedEventArgs e)
         {
-            fieldTextQuestionName.Text = Regex.Replace(
-                fieldTextQuestion.Text.ToLowerInvariant(),
-                "[^a-zA-Z0-9 -]+", string.Empty, RegexOptions.Compiled);
+            //fieldTextQuestionName.Text = Regex.Replace(
+            //    fieldTextQuestion.Text.ToLowerInvariant(),
+            //    "[^a-zA-Z0-9 -]+", string.Empty, RegexOptions.Compiled);
+        }
+
+        private void gridActivityFields_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (gridActivityFields.SelectedItems!=null && gridActivityFields.SelectedItems.Count > 1)
+            {
+                var fieldId = getValue(fieldTextUniqueId);
+                if (!string.IsNullOrWhiteSpace(fieldId))
+                {
+                    var res = MessageBox.Show(
+                        "You might lose your changes if you continue. Are you sure?", "",
+                        MessageBoxButton.OKCancel);
+                    if (res == MessageBoxResult.OK)
+                    {
+                        clearFieldEditor();
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                //display the field for group / table diplay
+                stackFieldAttributes.Visibility = Visibility.Collapsed;
+                stackGroupAttributes.Visibility = Visibility.Visible;
+                stackTableDisplayOptions.IsEnabled = false;
+
+                var selectedRows = gridActivityFields.SelectedItems.Cast<fieldProperties>();
+                var first = selectedRows.First();
+                var ofSameType = selectedRows.All(
+                    t => t.dataType == "Single Select"
+                    && t.fieldChoices != null && t.fieldChoices.Count == first.fieldChoices.Count);
+
+                if (ofSameType)
+                {
+                    var haveSameChoices =
+                        (from field in selectedRows
+                         from choice in field.fieldChoices
+                         select first.fieldChoices.Contains(choice)).All(t => t);
+                    stackTableDisplayOptions.IsEnabled = haveSameChoices;
+                }
+            }
+            else if (gridActivityFields.SelectedItems != null && gridActivityFields.SelectedItems.Count == 1)
+            {
+                stackFieldAttributes.Visibility = Visibility.Visible;
+                stackGroupAttributes.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
