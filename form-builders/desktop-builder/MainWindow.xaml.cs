@@ -53,6 +53,9 @@ namespace desktop_builder
         {
             //first we clear it
             clearFieldEditor();
+            clearGroupPanel();
+            stackFieldAttributes.Visibility = Visibility.Visible;
+            stackGroupAttributes.Visibility = Visibility.Collapsed;
 
             setValue(fieldTextUniqueId, module.uniqueId);
 
@@ -115,7 +118,7 @@ namespace desktop_builder
 
         void updateGroupView(IEnumerable<fieldProperties> fields)
         {
-            clearGroupPanel();
+            //clearGroupPanel();
             var first = fields.FirstOrDefault();// t => !string.IsNullOrWhiteSpace(t.groupName));
             if (first != null)
             {
@@ -182,15 +185,28 @@ namespace desktop_builder
         {
             setValue(fieldTextGroupName, "");
             setValue(fieldGroupPageNumber, "");
-            setValue("KUMBAYA", fieldDisplayAsBlockYes, fieldDisplayAsBlockNo);
+            setValue("KUMBAYA", fieldDisplayAsBlockYes, fieldDisplayAsBlockNo);            
         }
 
-        void updateFieldProperties(fieldProperties module)
+        void clearSubModuleEditor()
         {
+            var blank = new subModuleDefinition()
+            {
+                moduleFields = new List<fieldProperties>()
+            };
+            updateSubModuleEditor(blank);
+            updateFieldPropertiesList(blank);
+            clearFieldEditor();
+            clearGroupPanel();
+        }
+
+        bool updateFieldProperties(fieldProperties module)
+        {
+            var toRetun = false;
             var validationRes = textRequiredValidationRules.ValidateControl(fieldTextQuestion);
             if (!validationRes.IsValid)
             {
-                return;
+                return toRetun;
             }
             module.question = textRequiredValidationRules.getValue(fieldTextQuestion);
 
@@ -199,12 +215,19 @@ namespace desktop_builder
      let children = panel.Children.OfType<RadioButton>()
      from child in children
      select child).ToList();
-            module.dataType = getCheckedItem(allRadioButtons);
+
+            var datatype = getCheckedItem(allRadioButtons);
+            if (string.IsNullOrWhiteSpace(datatype))
+            {
+                setValue("Text", allRadioButtons);
+                datatype = getCheckedItem(allRadioButtons);
+            }
+            module.dataType = datatype;
 
             validationRes = textRequiredValidationRules.ValidateControl(fieldTextQuestionName);
             if (!validationRes.IsValid)
             {
-                return;
+                return toRetun;
             }
             module.questionName = textRequiredValidationRules.getValue(fieldTextQuestionName);
 
@@ -218,7 +241,7 @@ namespace desktop_builder
             {
                 var res = multiLineValidationRules.ValidateControl(textFieldChoices);
                 if (!res.IsValid)
-                { return; }
+                { return toRetun; }
                 var choices = multiLineValidationRules.getValueMultiline(textFieldChoices);
                 module.fieldChoices = choices;
             }
@@ -227,18 +250,18 @@ namespace desktop_builder
                 var res = intValidationRule.ValidateControl(fieldTextMinimum);
                 if (!res.IsValid)
                 {
-                    return;
+                    return toRetun;
                 }
                 res = intValidationRule.ValidateControl(fieldTextMaximum);
                 if (!res.IsValid)
                 {
-                    return;
+                    return toRetun;
                 }
 
                 res = minmaxValidationRule.ValidateControl(fieldTextMinimum, fieldTextMaximum);
                 if (!res.IsValid)
                 {
-                    return;
+                    return toRetun;
                 }
 
                 var numberConstraints = minmaxValidationRule.
@@ -247,40 +270,24 @@ namespace desktop_builder
                     numberConstraints = null;
                 module.numberConstraints = numberConstraints;
            }
-            else if (module.dataType == "Text")
-            {
-                //DateMinMaxValidationRules
-                var res = intValidationRule.ValidateControl(fieldTextMaxLength);
-                if (!res.IsValid)
-                {
-                    return;
-                }
-                res = gtZeroValidationRules.ValidateControl(fieldTextMaxLength);
-                if (!res.IsValid)
-                {
-                    return;
-                }
-                var maxLength = intValidationRule.getValue(fieldTextMaxLength);
-                module.textConstraints = new textConstraints() { maxLength = maxLength };
-            }
             else if (module.dataType == "Date")
             {
                 var res = dateValidationRules.ValidateControl(fieldTextDateMin);
                 if (!res.IsValid)
                 {
-                    return;
+                    return toRetun;
                 }
                 res = dateValidationRules.ValidateControl(fieldTextDateMax);
                 if (!res.IsValid)
                 {
-                    return;
+                    return toRetun;
                 }
 
                 res = dateMinMaxValidationRules.ValidateControl(
                     fieldTextDateMin, fieldTextDateMax);
                 if (!res.IsValid)
                 {
-                    return;
+                    return toRetun;
                 }
 
                 var numberConstraints = dateMinMaxValidationRules.
@@ -289,9 +296,31 @@ namespace desktop_builder
                     numberConstraints = null;
                 module.dateConstraints = numberConstraints;
             }
+            else if (module.dataType == "Text")
+            {
+                //DateMinMaxValidationRules
+                var res = intValidationRule.ValidateControl(fieldTextMaxLength);
+                if (!res.IsValid)
+                {
+                    return toRetun;
+                }
+                
+                res = gtZeroValidationRules.ValidateControl(fieldTextMaxLength);
+                if (!res.IsValid)
+                {
+                    return toRetun;
+                }
+                
+                var maxLength = intValidationRule.getValue(fieldTextMaxLength);
+                if (maxLength != Constants.NULL_NUM)
+                {
+                    module.textConstraints = new textConstraints() { maxLength = maxLength };
+                }                               
+            }
 
             //we clear the current view
             clearFieldEditor();
+            return true;
         }
 
         private void actvitiesRowSelected(object sender, MouseButtonEventArgs e)
@@ -312,14 +341,18 @@ namespace desktop_builder
             setValue(textSubModuleName, module.name);
             setValue(textSubModuleVersion, module.version);
             setValue(textSubModuleDescription, module.description);
+            
             //bind activities list
-            updateFieldPropertiesList(module);
+            updateFieldPropertiesList(module);         
         }
 
         private void updateFieldPropertiesList(subModuleDefinition module)
         {
             //sort
-            sortFields(module.moduleFields);
+            if (module.moduleFields != null)
+            {
+                sortFields(module.moduleFields);
+            }            
 
             //gridActivityFields
             labelActivityName.Content = "Currently editing - " + module.name;
@@ -441,7 +474,8 @@ namespace desktop_builder
                 new List<subModuleDefinition>();
             gridModuleActivities.ItemsSource = "";
             gridModuleActivities.ItemsSource = _currentModule.subModules;
-            //gridModuleActivities.re
+
+            clearSubModuleEditor();            
         }
 
         private void saveButton_click(object sender, RoutedEventArgs e)
@@ -494,39 +528,52 @@ namespace desktop_builder
                     //we get all the fields
                     var fields = gridActivityFields.SelectedItems;
                     updateGroupProperties(fields.Cast<fieldProperties>().ToList());
+                    updateFieldPropertiesList(currentActivity);
                     return;
                 }
                 else
                 {
                     //means this is a new record
-                    currentField = new fieldProperties()
-                    {
-                        uniqueId =
-                        Guid.NewGuid().ToString("N"),
-                        position = currentActivity.moduleFields.Count - 1
-                    };
+                    currentField = new fieldProperties();
 
                     //todo: make changes to a copy and add to main list once user confirms
-                    currentActivity.moduleFields.Add(currentField);
-                    setValue(fieldTextUniqueId, currentField.uniqueId);
+                    //setValue(fieldTextUniqueId, currentField.uniqueId);
                 }
             }
             else
             {
                 //we attempt to locate it
                 //todo: make changes to a copy and add to main list once user confirms
-                currentField = currentActivity.moduleFields.FirstOrDefault(t => t.uniqueId == fieldId);
-                if (currentField == null)
+                var oldField = currentActivity.moduleFields.FirstOrDefault(t => t.uniqueId == fieldId);
+                if (oldField == null)
                 {
                     showDialog("An unknown error occurred. Could not find named field");
                     return;
                 }
+
+                //we deepclone it
+                var serialised = Newtonsoft.Json.JsonConvert.SerializeObject(oldField);
+                currentField = Newtonsoft.Json.JsonConvert
+                    .DeserializeObject<fieldProperties>(serialised);
             }
 
-            updateFieldProperties(currentField);
-            //update activity fields
+            if (updateFieldProperties(currentField))
+            {
+                //update activity fields
+                currentActivity.moduleFields.RemoveAll(t => t.uniqueId == fieldId);
 
-            updateFieldPropertiesList(currentActivity);
+                if (string.IsNullOrWhiteSpace(currentField.uniqueId))
+                {
+                    currentField.uniqueId = Guid.NewGuid().ToString("N");
+                    currentField.position = currentActivity.moduleFields.Count + 1;
+                }
+
+                //sortFields(currentActivity.moduleFields);
+                //renumberFields(currentActivity);
+
+                currentActivity.moduleFields.Add(currentField);
+                updateFieldPropertiesList(currentActivity);
+            }
         }
         //cancelAddField_click
         private void cancelAddField_click(object sender, RoutedEventArgs e) {
@@ -594,17 +641,18 @@ namespace desktop_builder
         {
             //discard changes and clear the fields
             //clear the form
+            clearSubModuleEditor();
         }
 
         private void openExisting_click(object sender, RoutedEventArgs e)
-        {
+        {          
             var dialog = new OpenFileDialog() { CheckFileExists = true,
                 Multiselect =false, Filter="JSON|*.json",
                 InitialDirectory =Environment.GetFolderPath(
                     Environment.SpecialFolder.MyDocuments) };
             var dialogResult = dialog.ShowDialog();
             if (dialogResult != null && dialogResult == true)
-            {
+            {                
                 //we open the file
                 var savedModule =
                     Newtonsoft.Json.JsonConvert.DeserializeObject<moduleDefinition>
@@ -650,7 +698,7 @@ namespace desktop_builder
             if(button.Content.ToString()== "Move Up")
             {
                 //check if we are at the top
-                if (field.position <= 0)
+                if (field.position <= 1)
                     return;
 
                 var field2 = actvity.moduleFields.FirstOrDefault(x => x.position == field.position - 1);
@@ -756,7 +804,7 @@ namespace desktop_builder
         {
             for (var i = 0; i < actvity.moduleFields.Count; i++)
             {
-                actvity.moduleFields[i].position = i;
+                actvity.moduleFields[i].position = i + 1;
             }
         }
 

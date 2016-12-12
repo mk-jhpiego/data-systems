@@ -35,9 +35,9 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="540"/>
-            <ColumnDefinition MinWidth="400" Width="Auto"/>
+            <ColumnDefinition Width="225"/>
+            <ColumnDefinition Width="635"/>
+            <ColumnDefinition MinWidth="275" Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <Label Content="Module Builder / Designer" Grid.ColumnSpan="3" Grid.Row="0" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="25" FontFamily="Gill Sans MT"/>
@@ -48,7 +48,7 @@
         <Label HorizontalContentAlignment="Center" Content="Available Sub-modules" Grid.Column="1" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
         <Label HorizontalContentAlignment="Center" Content="Sub-module Fields" Grid.Column="2" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
         <Label HorizontalContentAlignment="Center" Content="Field Editor" Grid.Column="3" Grid.Row="1" Background="#FF718C3F" Foreground="White" FontSize="20" FontFamily="Gill Sans MT"/>
-        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2" Margin="15" >
+        <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2" Margin="5" >
             <Button Click="openExisting_click" Margin="0,0,0,25" Content="Open Existing" HorizontalAlignment="Left" Height="45" Width="Auto" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
             <Label Content="Module Name" Foreground="#FF305B75"/>
             <TextBox Name="textModuleName" FontSize="20" FontFamily="Gill Sans MT">
@@ -73,7 +73,7 @@
             <Button Click="saveButton_click" Margin="5" Content="Save" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
             <Button Click="cancelButton_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
         </StackPanel>
-        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2" Margin="15" >
+        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2" Margin="5" >
             <TextBox IsTabStop="False" Name="textSubModuleId" Height="0"/>
             <Label Content="Activity Name" Foreground="#FF305B75"/>
             <TextBox Name="textSubModuleName" FontSize="20" FontFamily="Gill Sans MT">
@@ -123,7 +123,7 @@
                 </DataGrid.ItemContainerStyle>
             </DataGrid>
         </StackPanel>
-        <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="2" Margin="15" >
+        <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="2" Margin="5" >
             <Label Name ="labelActivityName"  Content="Currently editing - " Foreground="#FF305B75" FontSize="20"/>
             <Label Content="List of available fields" Foreground="#FF305B75"/>
             <StackPanel Orientation="Horizontal">
@@ -134,10 +134,18 @@
             <DataGrid Name="gridActivityFields"
             Height="Auto" AutoGenerateColumns="False" ItemsSource="{Binding list}" 
                       IsReadOnly="True" CanUserDeleteRows="false" CanUserAddRows="False" CanUserSortColumns="True"
-                      RowHeight="30" SelectionChanged="gridActivityFields_SelectionChanged" 
+                      RowHeight="35" SelectionChanged="gridActivityFields_SelectionChanged" 
                       >
                 <DataGrid.Columns >
                     <DataGridTextColumn x:Name="colFieldId" Visibility="Collapsed" Binding="{Binding uniqueId}" Header="uniqueId" Width="0"  />
+                    <DataGridTextColumn x:Name="colPosition" Binding="{Binding position}" Header="#" Width="0.1*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn x:Name="colFieldName" Binding="{Binding questionName}" Header="Name" Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
@@ -154,7 +162,23 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn x:Name="colFieldDataType" Binding="{Binding dataType}" Header="Type of Data" Width="*">
+                    <DataGridTextColumn x:Name="colFieldDataType" Binding="{Binding dataType}" Header="Type of Data" Width=".5*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn x:Name="colPageNumber" Binding="{Binding pageNumber}" Header="Page" Width=".25*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn x:Name="colGroupName" Binding="{Binding groupName}" Header="Group" Width=".5*">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
@@ -170,8 +194,7 @@
                 </DataGrid.ItemContainerStyle>
             </DataGrid>
         </StackPanel>
-
-        <StackPanel Orientation="Vertical" Grid.Column="3" Grid.Row="2" Margin="25" >
+        <StackPanel Orientation="Vertical" Grid.Column="3" Grid.Row="2" Margin="5" >
             <StackPanel Name="stackGroupAttributes" Visibility="Collapsed">
                 <Label Content="Group/Section Display Options" Foreground="#FF305B75" FontSize="15"/>
                 <Label Content="Grouped items may appear on the same page" Foreground="#FF305B75"/>

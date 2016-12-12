@@ -44,13 +44,8 @@ namespace desktop_builder
 
     class fieldProperties
     {
-        internal int pageNumber { get; set; }
-        internal bool displayAsBlock { get; set; }
-        internal string groupName { get; set; }
-
         public bool isDeprecated { get; set; }
         public string uniqueId { get; set; }
-
         public int position { get; set; }
         public string question { get; set; }
         public string dataType { get; set; }
@@ -62,6 +57,9 @@ namespace desktop_builder
         public textConstraints textConstraints { get; set; }
         public minmaxConstraints dateConstraints { get; set; }
         //public maxLenConstraint maxLength { get; set; }
+        public int pageNumber { get; set; }
+        public bool displayAsBlock { get; set; }
+        public string groupName { get; set; }
     }
 
     static class Constants

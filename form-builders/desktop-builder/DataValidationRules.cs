@@ -197,7 +197,7 @@ namespace desktop_builder
         {
             var result = new ValidationResult(true, null);
             var value = getValueLong(control);
-            if (value < 0)
+            if (value < 0 && value != Constants.NULL_NUM)
             {
                 result = new ValidationResult(false, "Value should be greater than zero");
             }
