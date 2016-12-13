@@ -40,6 +40,8 @@ namespace desktop_builder
         //actvityFieldRowSelected
         private void actvityFieldRowSelected(object sender, MouseButtonEventArgs e)
         {
+            addField_click(null, null);
+
             var selectedRow = gridActivityFields.SelectedItem;
             if (selectedRow == null) return;
             var moduleActivity = selectedRow as fieldProperties;
@@ -70,6 +72,8 @@ namespace desktop_builder
                 setValue(textFieldChoices,
                     string.Join(Environment.NewLine, module.fieldChoices));
             }
+            setValue(fieldTextChoicesName, module.choicesName);
+
             setValue(fieldTextQuestionName, module.questionName);
             setValue(fieldTextQuestion, module.question);
             if (module.numberConstraints != null)
@@ -104,6 +108,7 @@ namespace desktop_builder
  select child).ToList();
             setValue("KUMBAYA", allRadioButtons);
             setValue(textFieldChoices, "");
+            setValue(fieldTextChoicesName, "");
             setValue(fieldTextQuestionName, "");
 
             setValue(fieldTextMinimum, "");
@@ -244,6 +249,7 @@ namespace desktop_builder
                 { return toRetun; }
                 var choices = multiLineValidationRules.getValueMultiline(textFieldChoices);
                 module.fieldChoices = choices;
+                module.choicesName = getValue(fieldTextChoicesName);
             }
             else if (module.dataType== "Number" || module.dataType == "Integer")
             {
@@ -343,7 +349,11 @@ namespace desktop_builder
             setValue(textSubModuleDescription, module.description);
             
             //bind activities list
-            updateFieldPropertiesList(module);         
+            updateFieldPropertiesList(module);
+            clearFieldEditor();
+            clearGroupPanel();
+            stackFieldAttributes.Visibility = Visibility.Visible;
+            stackGroupAttributes.Visibility = Visibility.Collapsed;
         }
 
         private void updateFieldPropertiesList(subModuleDefinition module)
@@ -501,7 +511,7 @@ namespace desktop_builder
         private void addField_click(object sender, RoutedEventArgs e) {
             //we get the current activity
             var activityId = getValue(textSubModuleId);
-            if (string.IsNullOrWhiteSpace(activityId))
+            if (string.IsNullOrWhiteSpace(activityId) && sender !=null)
             {
                 showDialog("Please select an activity first");
                 return;
@@ -509,11 +519,16 @@ namespace desktop_builder
 
             var currentActivity = _currentModule.subModules
                 .FirstOrDefault(t => t.id == activityId);
-            if (currentActivity == null)
+            if (currentActivity == null && sender != null)
             {
                 showDialog("An unknown error occurred. Could not find named activity");
                 return;
             }            
+
+            if(sender==null &&(currentActivity == null || string.IsNullOrWhiteSpace(activityId)))
+            {
+                return;
+            }
 
             //we read the field values and clear the form
             //we check if we have a field id and find the target record

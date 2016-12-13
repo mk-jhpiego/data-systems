@@ -49,6 +49,7 @@ namespace desktop_builder
         public int position { get; set; }
         public string question { get; set; }
         public string dataType { get; set; }
+        public string choicesName { get; set; }
         public List<string> fieldChoices { get; set; }
         public string questionName { get; set; }
         public string isRequired { get; set; }

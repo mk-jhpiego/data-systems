@@ -214,43 +214,48 @@
             </StackPanel>
             <StackPanel Name="stackFieldAttributes">
                 <TextBox Visibility="Collapsed" IsTabStop="False" Name="fieldTextUniqueId" FontSize="20" FontFamily="Gill Sans MT"/>
-            <Label Content="Question" Foreground="#FF305B75"/>
+                <Label Content="Type of Data" Foreground="#FF305B75"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,50,0" Name="dataTypeParent1">
+                        <RadioButton GroupName="dataType" Content="Label" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Text" IsChecked="True" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Number" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Integer" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Single Select" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Multiple Select" VerticalContentAlignment="Center" FontSize="20"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Name="dataTypeParent2">
+                        <RadioButton GroupName="dataType" Content="Date" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Time" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Dataset" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="GPS" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Image" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton GroupName="dataType" Content="Barcode" VerticalContentAlignment="Center" FontSize="20"/>
+                    </StackPanel>
+                </Grid>
+                <Label Content="Short Question Name (optional for labels)" Foreground="#FF305B75"/>
+                <TextBox Name="fieldTextQuestionName" FontSize="20" FontFamily="Gill Sans MT">
+                    <Binding Path="NumMin" Mode="TwoWay" />
+                </TextBox>
+                <Label Content="Question" Foreground="#FF305B75"/>
             <TextBox Name="fieldTextQuestion" FontSize="20" FontFamily="Gill Sans MT" TextChanged="fieldTextQuestion_TextChanged">
                 <Binding Path="Question" Mode="TwoWay" />
             </TextBox>
-            <Label Content="Type of Data" Foreground="#FF305B75"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="0,0,50,0" Name="dataTypeParent1">
-                    <RadioButton GroupName="dataType" Content="Label" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Text" IsChecked="True" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Number" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Integer" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Single Select" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Multiple Select" VerticalContentAlignment="Center" FontSize="20"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1" Name="dataTypeParent2">
-                    <RadioButton GroupName="dataType" Content="Date" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Time" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Dataset" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="GPS" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Image" VerticalContentAlignment="Center" FontSize="20"/>
-                    <RadioButton GroupName="dataType" Content="Barcode" VerticalContentAlignment="Center" FontSize="20"/>
-                </StackPanel>
-            </Grid>
-            <TextBlock Text="Field Choices. Add one per line" Foreground="#FF305B75"/>
+
+                <Label Content="Name of Choice List" Foreground="#FF305B75"/>
+                <TextBox Name="fieldTextChoicesName" FontSize="20" FontFamily="Gill Sans MT">
+                    <Binding Path="ChoicesName" Mode="TwoWay" />
+                </TextBox>
+                <TextBlock Text="Field Choices. Add one per line" Foreground="#FF305B75"/>
             <TextBox AcceptsReturn="True" MinLines="6" MaxLines="6" Name="textFieldChoices" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap">
                 <TextBox.Text>
                     <Binding Path="FieldChoices" Mode="TwoWay" />
                 </TextBox.Text>
-            </TextBox>
-            <Label Content="Short Question Name (optional for labels)" Foreground="#FF305B75"/>
-            <TextBox Name="fieldTextQuestionName" FontSize="20" FontFamily="Gill Sans MT">
-                <Binding Path="NumMin" Mode="TwoWay" />
-            </TextBox>            
+            </TextBox>         
             <Label Content="Validations" Foreground="#FF305B75" FontSize="20"/>
             <Label Content="Allowed Ranges (Min / Max)" Foreground="#FF305B75"/>
             <Grid>
