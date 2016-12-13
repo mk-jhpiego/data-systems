@@ -73,60 +73,63 @@
             <Button Click="saveButton_click" Margin="5" Content="Save" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
             <Button Click="cancelButton_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
         </StackPanel>
-        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2" Margin="5" >
-            <TextBox IsTabStop="False" Name="textSubModuleId" Height="0"/>
-            <Label Content="Activity Name" Foreground="#FF305B75"/>
-            <TextBox Name="textSubModuleName" FontSize="20" FontFamily="Gill Sans MT">
-                <Binding Path="ActivityName" Mode="TwoWay" />
-            </TextBox>
-            <Label Content="Version" Foreground="#FF305B75"/>
-            <TextBox Name="textSubModuleVersion" FontSize="20" FontFamily="Gill Sans MT">
-                <Binding Path="ActivityVersion" Mode="TwoWay" />
-            </TextBox>
-            <Label Content="Description" Foreground="#FF305B75"/>
-            <TextBox AcceptsReturn="True" MinLines="6" MaxLines="6" Name="textSubModuleDescription" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
+        <!--<Expander x:Name="expander1" Header="Expander" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">-->
+            <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="2" Margin="5" >
+                <TextBox IsTabStop="False" Name="textSubModuleId" Height="0"/>
+                <Label Content="Activity Name" Foreground="#FF305B75"/>
+                <TextBox Name="textSubModuleName" FontSize="20" FontFamily="Gill Sans MT">
+                    <Binding Path="ActivityName" Mode="TwoWay" />
+                </TextBox>
+                <Label Content="Version" Foreground="#FF305B75"/>
+                <TextBox Name="textSubModuleVersion" FontSize="20" FontFamily="Gill Sans MT">
+                    <Binding Path="ActivityVersion" Mode="TwoWay" />
+                </TextBox>
+                <Label Content="Description" Foreground="#FF305B75"/>
+                <TextBox AcceptsReturn="True" MinLines="6" MaxLines="6" Name="textSubModuleDescription" FontSize="20" FontFamily="Gill Sans MT" TextWrapping="Wrap"/>
 
-            <Button Click="saveSubModuleChangesButton_click"  Margin="5" Content="Save" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
-            <Button Click="cancelSubModuleChanges_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
+                <Button Click="saveSubModuleChangesButton_click"  Margin="5" Content="Update/Add New" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="20" FontFamily="Gill Sans MT"/>
+                <Button Click="cancelSubModuleChanges_click" Margin="5" Content="Cancel" HorizontalAlignment="Center" Height="45" Width="200" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
 
-            <Label Content="Current Activities " Foreground="#FF305B75" FontSize="20"/>
-            <DataGrid Name="gridModuleActivities" 
+                <Label Content="Current Activities " Foreground="#FF305B75" FontSize="20"/>
+                <DataGrid Name="gridModuleActivities" 
             Height="Auto" AutoGenerateColumns="False" ItemsSource="{Binding list}" 
                       IsReadOnly="True" CanUserDeleteRows="false" CanUserAddRows="False" CanUserSortColumns="True"
                       RowHeight="55" 
-                      >                
-                <DataGrid.Columns >
-                    <DataGridTextColumn x:Name="colActivityId" Visibility="Collapsed" Binding="{Binding id}" Header="Name" Width="0"  />
-                    <DataGridTextColumn x:Name="colActivityName" Binding="{Binding name}" Header="Name" Width="*">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style>
-                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
-                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn x:Name="colActivityDescription" 
+                      >
+                    <DataGrid.Columns >
+                        <DataGridTextColumn x:Name="colActivityId" Visibility="Collapsed" Binding="{Binding id}" Header="Name" Width="0"  />
+                        <DataGridTextColumn x:Name="colActivityName" Binding="{Binding name}" Header="Name" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                    <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn x:Name="colActivityDescription" 
                                         Binding="{Binding description}" 
                                         Header="Description" Width="*">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style>
-                                <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
-                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                </DataGrid.Columns>
-                <DataGrid.ItemContainerStyle>
-                    <Style TargetType="DataGridRow">
-                        <EventSetter Event="MouseDoubleClick" Handler="actvitiesRowSelected"/>
-                    </Style>
-                </DataGrid.ItemContainerStyle>
-            </DataGrid>
-        </StackPanel>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                    <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.ItemContainerStyle>
+                        <Style TargetType="DataGridRow">
+                            <EventSetter Event="MouseDoubleClick" Handler="actvitiesRowSelected"/>
+                        </Style>
+                    </DataGrid.ItemContainerStyle>
+                </DataGrid>
+            </StackPanel>
+        <!--</Expander>-->
         <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="2" Margin="5" >
             <Label Name ="labelActivityName"  Content="Currently editing - " Foreground="#FF305B75" FontSize="20"/>
             <Label Content="List of available fields" Foreground="#FF305B75"/>
             <StackPanel Orientation="Horizontal">
+                <Button Click="duplicateFieldButton_click"  Margin="5" Content="Make Copy" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
                 <Button Click="changeOrderButton_click"  Margin="5" Content="Move Up" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
                 <Button Click="changeOrderButton_click" Margin="5" Content="Move Lower" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
                 <Button Click="deleteFieldButton_click" Margin="5" Content="Delete" HorizontalAlignment="Center" Height="30" Width="100" Background="#FF305B75" Foreground="White" FontWeight="Bold" FontSize="15" FontFamily="Gill Sans MT"/>
@@ -215,7 +218,9 @@
             <StackPanel Name="stackFieldAttributes">
                 <TextBox Visibility="Collapsed" IsTabStop="False" Name="fieldTextUniqueId" FontSize="20" FontFamily="Gill Sans MT"/>
                 <Label Content="Type of Data" Foreground="#FF305B75"/>
-                <Grid>
+                <Expander x:Name="expander" Header="Expander" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">
+
+                    <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -235,8 +240,9 @@
                         <RadioButton GroupName="dataType" Content="GPS" VerticalContentAlignment="Center" FontSize="20"/>
                         <RadioButton GroupName="dataType" Content="Image" VerticalContentAlignment="Center" FontSize="20"/>
                         <RadioButton GroupName="dataType" Content="Barcode" VerticalContentAlignment="Center" FontSize="20"/>
-                    </StackPanel>
+                    </StackPanel>                        
                 </Grid>
+                </Expander>
                 <Label Content="Short Question Name (optional for labels)" Foreground="#FF305B75"/>
                 <TextBox Name="fieldTextQuestionName" FontSize="20" FontFamily="Gill Sans MT">
                     <Binding Path="NumMin" Mode="TwoWay" />
@@ -255,64 +261,60 @@
                 <TextBox.Text>
                     <Binding Path="FieldChoices" Mode="TwoWay" />
                 </TextBox.Text>
-            </TextBox>         
+            </TextBox>      
+            
             <Label Content="Validations" Foreground="#FF305B75" FontSize="20"/>
             <Label Content="Allowed Ranges (Min / Max)" Foreground="#FF305B75"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0" Content="Minimum" Foreground="#FF305B75"/>
-                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="0" Name="fieldTextMinimum" FontSize="20" FontFamily="Gill Sans MT">
-                    <Binding Path="NumMin" Mode="TwoWay" />
-                    <!--<Binding Path="TextBinded" Mode="TwoWay">
-                        <Binding.ValidationRules>
-                            <local:IntegerValidationRules x:Name="intValidationRule">
-                            </local:IntegerValidationRules>
-                            <local:MinMaxValidationRules x:Name="minmaxValidationRule">
-                            </local:MinMaxValidationRules>
-                        </Binding.ValidationRules>
-                    </Binding>-->
-                </TextBox>
-                <Label Grid.Column="0" Grid.Row="1" Content="Maximum" Foreground="#FF305B75"/>
-                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="1" Name="fieldTextMaximum" FontSize="20" FontFamily="Gill Sans MT">
-                    <Binding Path="NumMax" Mode="TwoWay" />
-                </TextBox>
-                <Label Grid.Column="0" Grid.Row="2" Content="Maximum Length" Foreground="#FF305B75"/>
-                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="2" Name="fieldTextMaxLength" FontSize="20" FontFamily="Gill Sans MT">
-                    <Binding Path="MaxLength" Mode="TwoWay" />
-                </TextBox>
+                <Expander x:Name="expanderValidations" Header="Expander" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top">
 
-                <Label Grid.Column="0" Grid.Row="3" Content="Is Required" Foreground="#FF305B75"/>
-                <RadioButton Name="fieldIsRequiredYes" Grid.Column="1" Grid.Row="3" GroupName="isRequired" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
-                <RadioButton IsChecked="True" Name="fieldIsRequiredNo" Grid.Column="1" Grid.Row="3" Margin="100,0,0,0" GroupName="isRequired" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Content="Minimum" Foreground="#FF305B75"/>
+                        <TextBox MinWidth="200" Grid.Column="1" Grid.Row="0" Name="fieldTextMinimum" FontSize="20" FontFamily="Gill Sans MT">
+                            <Binding Path="NumMin" Mode="TwoWay" />
+                        </TextBox>
+                        <Label Grid.Column="0" Grid.Row="1" Content="Maximum" Foreground="#FF305B75"/>
+                        <TextBox MinWidth="200" Grid.Column="1" Grid.Row="1" Name="fieldTextMaximum" FontSize="20" FontFamily="Gill Sans MT">
+                            <Binding Path="NumMax" Mode="TwoWay" />
+                        </TextBox>
+                        <Label Grid.Column="0" Grid.Row="2" Content="Maximum Length" Foreground="#FF305B75"/>
+                        <TextBox MinWidth="200" Grid.Column="1" Grid.Row="2" Name="fieldTextMaxLength" FontSize="20" FontFamily="Gill Sans MT">
+                            <Binding Path="MaxLength" Mode="TwoWay" />
+                        </TextBox>
 
-                <Label Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Content="Allowed Date Ranges, can use @today or YYYY-mm-dd" Foreground="#FF305B75"/>
-                <Label Grid.Column="0" Grid.Row="5" Content="Min. Date" Foreground="#FF305B75"/>
-                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="5" Name="fieldTextDateMin" FontSize="20" FontFamily="Gill Sans MT">
-                    <Binding Path="DateMin" Mode="TwoWay" />
-                </TextBox>
-                <Label Grid.Column="0" Grid.Row="6" Content="Max Date" Foreground="#FF305B75"/>
-                <TextBox MinWidth="200" Grid.Column="1" Grid.Row="6" Name="fieldTextDateMax" FontSize="20" FontFamily="Gill Sans MT">
-                    <Binding Path="DateMax" Mode="TwoWay" />
-                </TextBox>
-                <Label Grid.Column="0" Grid.Row="7" Content="Is Indexed" Foreground="#FF305B75"/>
-                <RadioButton Name="fieldIsIndexedYes" Grid.Column="1" Grid.Row="7" GroupName="isIndexed" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
-                <RadioButton IsChecked="True" Name="fieldIsIndexedNo" Grid.Column="1" Grid.Row="7" Margin="100,0,0,0" GroupName="isIndexed" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
+                        <Label Grid.Column="0" Grid.Row="3" Content="Is Required" Foreground="#FF305B75"/>
+                        <RadioButton Name="fieldIsRequiredYes" Grid.Column="1" Grid.Row="3" GroupName="isRequired" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton IsChecked="True" Name="fieldIsRequiredNo" Grid.Column="1" Grid.Row="3" Margin="100,0,0,0" GroupName="isRequired" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
 
-            </Grid>
-        </StackPanel>
+                        <Label Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Content="Allowed Date Ranges, can use @today or YYYY-mm-dd" Foreground="#FF305B75"/>
+                        <Label Grid.Column="0" Grid.Row="5" Content="Min. Date" Foreground="#FF305B75"/>
+                        <TextBox MinWidth="200" Grid.Column="1" Grid.Row="5" Name="fieldTextDateMin" FontSize="20" FontFamily="Gill Sans MT">
+                            <Binding Path="DateMin" Mode="TwoWay" />
+                        </TextBox>
+                        <Label Grid.Column="0" Grid.Row="6" Content="Max Date" Foreground="#FF305B75"/>
+                        <TextBox MinWidth="200" Grid.Column="1" Grid.Row="6" Name="fieldTextDateMax" FontSize="20" FontFamily="Gill Sans MT">
+                            <Binding Path="DateMax" Mode="TwoWay" />
+                        </TextBox>
+                        <Label Grid.Column="0" Grid.Row="7" Content="Is Indexed" Foreground="#FF305B75"/>
+
+                        <RadioButton Name="fieldIsIndexedYes" Grid.Column="1" Grid.Row="7" GroupName="isIndexed" Content="Yes" VerticalContentAlignment="Center" FontSize="20"/>
+                        <RadioButton IsChecked="True" Name="fieldIsIndexedNo" Grid.Column="1" Grid.Row="7" Margin="100,0,0,0" GroupName="isIndexed" Content="No" VerticalContentAlignment="Center" FontSize="20"/>
+                    </Grid>
+                </Expander>
+            </StackPanel>
         
         <Grid >
                 <Grid.ColumnDefinitions>

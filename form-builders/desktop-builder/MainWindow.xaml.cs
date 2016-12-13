@@ -507,6 +507,14 @@ namespace desktop_builder
             }
         }
 
+        fieldProperties cloneField(fieldProperties objectToClone)
+        {
+            var serialised = Newtonsoft.Json.JsonConvert.SerializeObject(objectToClone);
+            var cloneRecord = Newtonsoft.Json.JsonConvert
+                .DeserializeObject<fieldProperties>(serialised);
+            return cloneRecord;
+        }
+
         //addField_click
         private void addField_click(object sender, RoutedEventArgs e) {
             //we get the current activity
@@ -567,9 +575,7 @@ namespace desktop_builder
                 }
 
                 //we deepclone it
-                var serialised = Newtonsoft.Json.JsonConvert.SerializeObject(oldField);
-                currentField = Newtonsoft.Json.JsonConvert
-                    .DeserializeObject<fieldProperties>(serialised);
+                currentField = cloneField(oldField);                
             }
 
             if (updateFieldProperties(currentField))
@@ -685,6 +691,30 @@ namespace desktop_builder
                 var module = new moduleDefinition() { id = Guid.NewGuid().ToString("N") };
                 updateView(module);
             }            
+        }
+
+        //duplicateFieldButton_click
+        private void duplicateFieldButton_click(object sender, RoutedEventArgs e)
+        {
+            //we get the selected field
+            //clone it, change something and add it back
+            if (gridActivityFields.SelectedItem != null)
+            {
+                //we get all the values
+                var submoduleId = getValue(textSubModuleId);
+                var subModule = _currentModule.subModules
+                    .FirstOrDefault(t => t.id == submoduleId);
+                var fieldToDuplicate = gridActivityFields.SelectedItem as fieldProperties;
+                var cloned = cloneField(fieldToDuplicate);
+                var rand = new Random(DateTime.Now.Millisecond);
+                cloned.uniqueId = Guid.NewGuid().ToString("N");
+                cloned.questionName = cloned.questionName +"-"+ rand.Next(1000, 10000);
+                cloned.position = subModule.moduleFields.Count + 1;
+                subModule.moduleFields.Add(cloned);
+
+                //refresh the grid
+                updateFieldPropertiesList(subModule);
+            }
         }
 
         //deleteFieldButton_click
