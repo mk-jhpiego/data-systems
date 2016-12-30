@@ -24,6 +24,7 @@ namespace desktop_builder
     /// </summary>
     public partial class MainWindow : Window
     {
+        string _currentFile = string.Empty;
         moduleDefinition _currentModule = null;
         public MainWindow()
         {
@@ -343,8 +344,9 @@ namespace desktop_builder
 
         void updateSubModuleEditor(subModuleDefinition module)
         {
-            setValue(textSubModuleId, module.id);
+            setValue(textSubModuleId, module.id);            
             setValue(textSubModuleName, module.name);
+            setValue(textSubModulePrefix, module.prefix);
             setValue(textSubModuleVersion, module.version);
             setValue(textSubModuleDescription, module.description);
             
@@ -439,6 +441,9 @@ namespace desktop_builder
             {
                 return toReturn;
             }
+
+            module.prefix = textRequiredValidationRules.getValue(textModulePrefix);
+
             module.name = textRequiredValidationRules.getValue(textModuleName);
 
             module.description = getValue(textModuleDescription);
@@ -467,12 +472,13 @@ namespace desktop_builder
         void updateView(moduleDefinition module)
         {
             _currentModule = module;
+            setValue(textModulePrefix, module.prefix);
             setValue(textModuleName, module.name);
             setValue(textModuleDescription, module.description);
             setValue(textModuleVersion, module.version);
             setValue(module.moduleType, rdbModTypePerson, rdbModTypeNonPerson, rdbModTypeGroup);
             setValue(textEmailAddress, module.userId);
-            setValue(textModuleName, module.name);
+            //setValue(textModuleName, module.name);
 
             //bind activities list
             updateActivitiesList(_currentModule.subModules);
@@ -486,6 +492,21 @@ namespace desktop_builder
             gridModuleActivities.ItemsSource = _currentModule.subModules;
 
             clearSubModuleEditor();            
+        }
+
+        private void generateOdkButton_click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void generateDefinitionsButton_click(object sender, RoutedEventArgs e)
+        {
+            //we get the fields and their choices
+
+            //convert to field definitions
+
+            //for each choice, we get clean names
+
         }
 
         private void saveButton_click(object sender, RoutedEventArgs e)
@@ -507,11 +528,12 @@ namespace desktop_builder
             }
         }
 
-        fieldProperties cloneField(fieldProperties objectToClone)
+        //subModuleDefinition
+        T cloneItem<T>(T objectToClone) where T:class
         {
             var serialised = Newtonsoft.Json.JsonConvert.SerializeObject(objectToClone);
             var cloneRecord = Newtonsoft.Json.JsonConvert
-                .DeserializeObject<fieldProperties>(serialised);
+                .DeserializeObject<T>(serialised);
             return cloneRecord;
         }
 
@@ -575,7 +597,7 @@ namespace desktop_builder
                 }
 
                 //we deepclone it
-                currentField = cloneField(oldField);                
+                currentField = cloneItem(oldField);                
             }
 
             if (updateFieldProperties(currentField))
@@ -602,7 +624,35 @@ namespace desktop_builder
             //we clear the current view
             clearFieldEditor();
         }
+        //cloneSubModuleButton_click
+        private void cloneSubModuleButton_click(object sender, RoutedEventArgs e)
+        {
+            if (_currentModule == null)
+            {
+                return;
+            }
 
+            //we get the selected item
+            subModuleDefinition subModule = null;
+            if (gridModuleActivities.SelectedItem == null)
+            {
+                return;
+            }
+            subModule = gridModuleActivities.SelectedItem as subModuleDefinition;
+            //clone
+            var cloned = cloneItem(subModule);
+            //change a few things 
+            var rnd = new Random(DateTime.Now.Millisecond);
+            cloned.id = Guid.NewGuid().ToString("N");
+            var rint = rnd.Next(9999, 99999);
+            cloned.name = cloned.name + "-" + rint;
+            cloned.name = cloned.prefix + "-" + rint;
+            //add to module
+            _currentModule.subModules.Add(cloned);
+
+            //we refresh the view
+            updateActivitiesList(_currentModule.subModules);
+        }
         private void saveSubModuleChangesButton_click(object sender, RoutedEventArgs e)
         {
             //we read the field values and clear the form
@@ -624,6 +674,13 @@ namespace desktop_builder
                 return;
             }
             var subModuleName = textRequiredValidationRules.getValue(textSubModuleName);
+
+            validationRes = textRequiredValidationRules.ValidateControl(textSubModulePrefix);
+            if (!validationRes.IsValid)
+            {
+                return;
+            }
+            var subModulePrefix = textRequiredValidationRules.getValue(textSubModulePrefix);
 
             var subModuleDescription = getValue(textSubModuleDescription);
 
@@ -652,6 +709,7 @@ namespace desktop_builder
 
             //activity.id = subModuleId;
             activity.name = subModuleName;
+            activity.prefix = subModulePrefix;
             activity.description = subModuleDescription;
             activity.version = subModuleVersion;
 
@@ -705,7 +763,7 @@ namespace desktop_builder
                 var subModule = _currentModule.subModules
                     .FirstOrDefault(t => t.id == submoduleId);
                 var fieldToDuplicate = gridActivityFields.SelectedItem as fieldProperties;
-                var cloned = cloneField(fieldToDuplicate);
+                var cloned = cloneItem(fieldToDuplicate);
                 var rand = new Random(DateTime.Now.Millisecond);
                 cloned.uniqueId = Guid.NewGuid().ToString("N");
                 cloned.questionName = cloned.questionName +"-"+ rand.Next(1000, 10000);

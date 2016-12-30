@@ -11,6 +11,7 @@ namespace desktop_builder
     class moduleBaseDefinition
     {
         public string id { get; set; }
+        public string prefix { get; set; }
         public string name { get; set; }
         public string version { get; set; }
         public string description { get; set; }
@@ -21,7 +22,6 @@ namespace desktop_builder
         public string moduleType { get; set; }
         public string userId { get; set; }
         public List<subModuleDefinition> subModules { get; set; }
-
     }
 
     class subModuleDefinition: moduleBaseDefinition
